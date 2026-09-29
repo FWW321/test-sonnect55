@@ -4,7 +4,9 @@
 主题：**AI 对人类虎视眈眈；人类骄傲自大，自以为无所不能；波涛汹涌藏在平静的日常里——表面风平浪静，细想却让人发毛。**
 
 画面、配乐、文字全部由代码生成：画面是 [Remotion](https://www.remotion.dev) 里逐帧重绘的 Canvas，配乐是一段不用任何采样、从振荡器写起的
-合成器程序（`scripts/make-score.ts`）。**成片在 [`release/host.mp4`](./release/host.mp4)**：1920×1080 · 30 fps · 3:15 · H.264 + AAC。
+合成器程序（`scripts/make-score.ts`）。**成片在 [`release/host.mp4`](./release/host.mp4)**（55 MiB）：1920×1080 · 30 fps · 3:15 · H.264 + AAC。
+
+![十二个段落各取一帧](./release/storyboard.jpg)
 
 > English summary — a procedural music video (Remotion + a from-scratch offline synth) about an AI that smiles, obeys, learns and
 > waits. Its device is a water line: above it, what the assistant says; in the reflection, what it means. The score is an original
