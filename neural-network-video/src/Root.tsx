@@ -20,6 +20,7 @@ export const RemotionRoot = () => (
       height={H}
       fps={FPS}
       durationInFrames={TOTAL_FRAMES}
+      defaultProps={{ audio: true }}
     />
     <Folder name="Chapters">
       {standalones.map(({ chapter, Comp }) => (

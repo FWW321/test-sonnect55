@@ -11,10 +11,11 @@
     "train:toys": "tsx scripts/train-toys.ts",
     "train:cnn": "tsx scripts/train-cnn.ts",
     "fit:attention": "tsx scripts/fit-attention.ts",
-    "audio": "tsx scripts/make-score.ts",
+    "score": "tsx scripts/make-score.ts && remotion ffmpeg -y -i out/score.wav -c:a aac -b:a 160k -ar 48000 -f mp4 -movflags +faststart public/audio/score.m4a",
     "qa": "node scripts/qa-stills.mjs",
-    "render": "remotion render src/index.ts NeuralNetwork out/neural-network.mp4",
-    "render:draft": "remotion render src/index.ts NeuralNetwork out/draft.mp4 --scale=0.5 --crf=30"
+    "render": "remotion render src/index.ts NeuralNetwork out/neural-network.mp4 --scale=1.5",
+    "render:silent": "remotion render src/index.ts NeuralNetwork out/neural-network-silent.mp4 --scale=1.5 --props='{\"audio\":false}'",
+    "render:draft": "remotion render src/index.ts NeuralNetwork out/draft.mp4 --scale=0.5 --crf=30 --props='{\"audio\":false}'"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.529",

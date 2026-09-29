@@ -1,4 +1,4 @@
-import { Sequence } from "remotion";
+import { Audio, Sequence, staticFile } from "remotion";
 import { CHAPTER_COMPONENTS } from "./chapters";
 import { TimeContext } from "./lib/time";
 import { Stage } from "./Stage";
@@ -19,9 +19,15 @@ export const ChapterShell: React.FC<{ chapter: ChapterDef }> = ({ chapter }) => 
   );
 };
 
-/** The whole film: 14 overlapping chapters on one 18 000-frame timeline. */
-export const Main: React.FC = () => (
+export type MainProps = {
+  /** Include the score (public/audio/score.m4a, made by `npm run score`). */
+  audio: boolean;
+};
+
+/** The whole film: 14 overlapping chapters on one 18 000-frame timeline, with the score underneath. */
+export const Main: React.FC<MainProps> = ({ audio }) => (
   <Stage>
+    {audio && <Audio src={staticFile("audio/score.m4a")} />}
     {CHAPTERS.map((ch) => (
       <Sequence
         key={ch.id}

@@ -47,7 +47,7 @@ const RAW: [ChapterId, string, number, string][] = [
   ["neuron", "神经元", 1650, "the neuron's activation curve grows into the full-screen plot"],
   ["activation", "激活函数", 1260, "the row of ReLU units becomes a column of neurons — a layer"],
   ["forward", "前向传播", 1800, "the network's last two output neurons become the two classes"],
-  ["space", "折叠空间", 1740, "the misclassified points and the loss number"],
+  ["space", "折叠空间", 1740, "the spiral picture, with the trained decision field"],
   ["loss", "损失", 1080, "the loss surface, with the current parameters marked on it"],
   ["descent", "梯度下降", 1380, "the parameter point becomes the first node, w, of a computation graph"],
   ["backprop", "反向传播", 2010, "the weight-update rule w ← w − η ∂L/∂w, centred"],
