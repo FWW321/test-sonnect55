@@ -1,0 +1,32 @@
+{
+  "name": "host-mv",
+  "version": "1.0.0",
+  "private": true,
+  "description": "《宿主》HOST — a procedural music video inspired by the opening of Parasyte -the maxim-: an AI that smiles, obeys, learns and waits.",
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "score": "tsx scripts/make-score.ts && remotion ffmpeg -y -i out/host.wav -c:a aac -b:a 192k -ar 48000 -f mp4 -movflags +faststart public/audio/host.m4a",
+    "qa": "node scripts/qa-stills.mjs",
+    "render": "remotion render src/index.ts Host out/host.mp4 --scale=1.5",
+    "render:silent": "remotion render src/index.ts Host out/host-silent.mp4 --scale=1.5 --props='{\"audio\":false}'",
+    "render:draft": "remotion render src/index.ts Host out/draft.mp4 --scale=0.5 --crf=30"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.529",
+    "@remotion/cli": "4.0.529",
+    "@remotion/fonts": "4.0.529",
+    "@remotion/renderer": "4.0.529",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "4.0.529"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "~5.9.3"
+  }
+}
