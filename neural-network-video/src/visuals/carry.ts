@@ -4,9 +4,14 @@
  * size, look) of the thing they both draw during their overlap.
  */
 import { CanvasRenderingContext2DLike, NeuronStyle } from "./types";
-import { RGB_POS } from "../theme";
+import { RGB_NEG, RGB_POS } from "../theme";
 import { grey, rgba } from "../lib/color";
 import { arrow, circle, glow, line, rrect, text } from "../lib/draw";
+import { ease, lerp, seg } from "../lib/math";
+import { FPS } from "../theme";
+import { chapterById } from "../timeline";
+import { sigmoid } from "./activations";
+import { FnPlotOpts, Plot, Rect, Win, drawFunctionPlot } from "./plot";
 import { C } from "../theme";
 import { clamp } from "../lib/math";
 import { heroImage } from "./data";
@@ -98,5 +103,81 @@ export function drawNeuron(ctx: Ctx, x: number, y: number, r: number, st: Neuron
     text(ctx, "Σ", x - r * 0.34, y + r * 0.2, { size: r * 0.62, weight: 500, color: C.dim, align: "center", font: "sans", alpha: 0.85 });
     text(ctx, st.fLabel ?? "f", x + r * 0.34, y + r * 0.2, { size: r * 0.6, weight: 500, color: C.dim, align: "center", font: "sans", italic: true, alpha: 0.85 });
   }
+  ctx.globalAlpha = a0;
+}
+
+// ------------------------------------------------------------------------------------------
+// Ch.2 → Ch.3: the activation-function panel. A small inset next to the neuron grows into the
+// full-size plot that chapter 3 is built around.
+//
+// Ownership rule for every carried object: the outgoing chapter draws it until its nominal end
+// (t < dur), the incoming chapter from its nominal start (t ≥ 0) — so on the hand-off frame the
+// object is drawn exactly once and anti-aliased edges never double up.
+// ------------------------------------------------------------------------------------------
+export const PLOT_MINI: Rect = { x: 948, y: 256, w: 220, h: 156 };
+export const PLOT_BIG: Rect = { x: 372, y: 116, w: 540, h: 380 };
+export const SIG_WIN: Win = { x0: -6, x1: 6, y0: -0.06, y1: 1.06 };
+
+/** Frame window (master frames) in which the panel travels from inset to full size. */
+const NEURON = chapterById("neuron");
+export const PLOT_TRAVEL = [NEURON.from + 51.4 * FPS, NEURON.from + 55.4 * FPS] as const;
+
+export function activationPlotRect(gf: number): Rect {
+  const e = seg(gf, PLOT_TRAVEL[0], PLOT_TRAVEL[1], ease.inOut);
+  return {
+    x: lerp(PLOT_MINI.x, PLOT_BIG.x, e),
+    y: lerp(PLOT_MINI.y, PLOT_BIG.y, e),
+    w: lerp(PLOT_MINI.w, PLOT_BIG.w, e),
+    h: lerp(PLOT_MINI.h, PLOT_BIG.h, e),
+  };
+}
+
+export interface CarriedPlotOpts extends FnPlotOpts {
+  /** The operating point (z, σ(z)). */
+  z: number;
+}
+
+export function drawCarriedActivationPlot(ctx: Ctx, gf: number, o: CarriedPlotOpts): Plot {
+  return drawFunctionPlot(ctx, activationPlotRect(gf), SIG_WIN, sigmoid, { ...o, dotZ: o.z });
+}
+
+// ------------------------------------------------------------------------------------------
+// Ch.3 → Ch.4: the row of ReLU neurons becomes the first hidden layer of the digit network.
+// ------------------------------------------------------------------------------------------
+export const H1 = {
+  x: 520,
+  r: 9.5,
+  ys: Array.from({ length: 16 }, (_, i) => 132 + i * 26.4),
+} as const;
+
+/** A small layer neuron: dark disc, ring, cyan fill by activation (0–1). */
+export function drawSmallNeuron(ctx: Ctx, x: number, y: number, r: number, act = 0, alpha = 1) {
+  const a0 = ctx.globalAlpha;
+  ctx.globalAlpha = a0 * alpha;
+  const v = clamp(act);
+  if (v > 0.25) glow(ctx, x, y, r * (1.8 + v * 1.4), RGB_POS, 0.16 + 0.5 * v);
+  circle(ctx, x, y, r, { fill: "#0c1118" });
+  if (v > 0.01) circle(ctx, x, y, r * 0.92, { fill: rgba([76 + 130 * v * v, 201 + 40 * v * v, 240 + 12 * v * v], 0.12 + 0.88 * v) });
+  circle(ctx, x, y, r, { stroke: v > 0.04 ? rgba([200, 238, 252], 0.5 + 0.45 * v) : "rgba(255,255,255,0.34)", lw: 1.4 });
+  ctx.globalAlpha = a0;
+}
+
+// ------------------------------------------------------------------------------------------
+// Ch.4 → Ch.5: two output neurons become the two class markers ("A" orange, "B" cyan).
+// ------------------------------------------------------------------------------------------
+export const LEGEND = {
+  A: { x: 1042, y: 92 },
+  B: { x: 1042, y: 124 },
+  r: 8,
+} as const;
+
+/** A filled class marker (orange = class A, cyan = class B). */
+export function drawClassDot(ctx: Ctx, x: number, y: number, r: number, cls: "A" | "B", alpha = 1) {
+  const a0 = ctx.globalAlpha;
+  ctx.globalAlpha = a0 * alpha;
+  const col = cls === "A" ? RGB_NEG : RGB_POS;
+  glow(ctx, x, y, r * 2.6, col, 0.4);
+  circle(ctx, x, y, r, { fill: rgba(col, 1) });
+  circle(ctx, x, y, r, { stroke: "rgba(255,255,255,0.55)", lw: 1.2 });
   ctx.globalAlpha = a0;
 }

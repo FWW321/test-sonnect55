@@ -123,3 +123,14 @@ export const thousands = (n: number) =>
   Math.round(n)
     .toString()
     .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+/** Piecewise interpolation through [time, value] keys with an easing on every span. */
+export function keyframes(t: number, keys: [number, number][], e: (t: number) => number = ease.inOutSine): number {
+  if (t <= keys[0][0]) return keys[0][1];
+  for (let i = 1; i < keys.length; i++) {
+    const [t0, v0] = keys[i - 1];
+    const [t1, v1] = keys[i];
+    if (t <= t1) return lerp(v0, v1, e(clamp((t - t0) / (t1 - t0))));
+  }
+  return keys[keys.length - 1][1];
+}

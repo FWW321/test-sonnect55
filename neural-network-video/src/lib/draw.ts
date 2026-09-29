@@ -301,3 +301,29 @@ export function pulse(
   glow(ctx, x, y, size * 3.4, c, 0.9 * alpha);
   circle(ctx, x, y, size * 0.55, { fill: rgba([255, 255, 255], alpha) });
 }
+
+/**
+ * A math variable with a subscript ("h", "1" → h₁), built by hand because Inter's latin subset has no
+ * subscript digits. Returns the total advance width. `align: "center"` centres the pair on x.
+ */
+export function mathText(
+  ctx: Ctx,
+  base: string,
+  subscript: string,
+  x: number,
+  y: number,
+  o: { size?: number; color?: string; alpha?: number; align?: "left" | "center"; italic?: boolean; weight?: number } = {},
+): number {
+  const size = o.size ?? 20;
+  ctx.save();
+  ctx.font = `${o.italic === false ? "" : "italic "}${o.weight ?? 500} ${size}px ${FONTS.sans}`;
+  const bw = ctx.measureText(base).width;
+  ctx.font = `${o.weight ?? 500} ${size * 0.62}px ${FONTS.sans}`;
+  const sw = ctx.measureText(subscript).width;
+  ctx.restore();
+  const total = bw + sw + 1;
+  const x0 = o.align === "center" ? x - total / 2 : x;
+  text(ctx, base, x0, y, { size, color: o.color, alpha: o.alpha, italic: o.italic !== false, font: "sans", weight: o.weight ?? 500 });
+  text(ctx, subscript, x0 + bw + 1, y + size * 0.26, { size: size * 0.62, color: o.color, alpha: o.alpha, font: "sans", weight: o.weight ?? 500 });
+  return total;
+}

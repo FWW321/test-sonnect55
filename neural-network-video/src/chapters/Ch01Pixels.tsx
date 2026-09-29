@@ -144,6 +144,8 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   const c = chapterClock(gf, CH);
   const t = c.t;
   const cam = camera(t);
+  // Ownership of carried objects: this chapter draws them until its nominal end; chapter 2 from its start.
+  const owns = t < c.dur;
 
   // ---------- world (camera) layer: the cells
   ctx.save();
@@ -176,6 +178,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
     let asInput = 0;
     if (t > T.open - 0.2) {
       if (slot !== undefined) {
+        if (!owns) continue;
         const p3 = ease.soft(seg(t, T.open + slot * 0.14, T.open + slot * 0.14 + 1.5, ease.linear));
         const tgt = HERO.inputs[slot];
         const s = HERO.inputSize;
@@ -284,7 +287,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
 
   // ---------- the neuron opens up inside the box (carried into chapter 2)
   const grow = ease.soft(seg(t, T.open + 1.0, T.open + 3.4, ease.linear));
-  if (grow > 0.003) {
+  if (grow > 0.003 && owns) {
     drawHeroEdges(ctx, seg(t, T.open + 2.4, T.open + 4.0, ease.out));
     drawHeroOutput(ctx, seg(t, T.open + 3.0, T.open + 4.4, ease.out));
     drawNeuron(ctx, HERO.neuron.x, HERO.neuron.y, HERO.neuron.r * grow, { alpha: clamp(grow * 1.6) });
