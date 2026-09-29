@@ -15,7 +15,7 @@ export interface FieldRect {
 }
 
 /** Where the trained field sits in chapters 9 and 10 (the carry between them). */
-export const FIELD9: FieldRect = { x: 96, y: 124, w: 400, h: 400 };
+export const FIELD9: FieldRect = { x: 96, y: 142, w: 400, h: 400 };
 
 /** The loss chart of chapters 9–10: DOM box of remocn's line chart, and the plotting area inside it. */
 export const CHART9 = { x: 580, y: 176, w: 620, h: 372, svgW: 560, svgH: 340, pad: 60 };

@@ -67,8 +67,39 @@ export interface SurfaceOpts {
 /** Loss levels of the contour lines — geometric, so the ravine floor and the far walls both get lines. */
 const LEVELS = [0.15, 0.3, 0.6, 1.2, 2.5, 5, 10, 20, 40];
 
-/** Filled, lit quads sorted back to front. */
+let surfCanvas: HTMLCanvasElement | null = null;
+
+/**
+ * Filled, lit quads sorted back to front. A partly transparent surface is painted opaque into an offscreen
+ * canvas first and composited once — painting quads at low alpha directly would let the background show
+ * through every anti-aliased seam (a dotted "screen-door" texture).
+ */
 export function drawSurface(ctx: Ctx, o: SurfaceOpts) {
+  const a = (o.alpha ?? 1) * ctx.globalAlpha;
+  if (a >= 0.995 || !ctx.canvas) {
+    paintSurface(ctx, o);
+    return;
+  }
+  if (a <= 0.003) return;
+  const cv = ctx.canvas;
+  if (!surfCanvas) surfCanvas = document.createElement("canvas");
+  if (surfCanvas.width !== cv.width || surfCanvas.height !== cv.height) {
+    surfCanvas.width = cv.width;
+    surfCanvas.height = cv.height;
+  }
+  const g = surfCanvas.getContext("2d")!;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, surfCanvas.width, surfCanvas.height);
+  g.setTransform(ctx.getTransform());
+  paintSurface(g, { ...o, alpha: 1 });
+  ctx.save();
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.globalAlpha = a;
+  ctx.drawImage(surfCanvas, 0, 0);
+  ctx.restore();
+}
+
+function paintSurface(ctx: Ctx, o: SurfaceOpts) {
   const { P, L } = getGrid();
   const cam = o.cam;
   const pr = P.map((p) => project(cam, p));

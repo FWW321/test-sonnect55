@@ -324,10 +324,13 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
     // HUD — right of the terrain, so the update rule stays readable on the left
     const hud = seg(t, 8.6, 9.6, ease.out) * (1 - seg(t, 17.4, 18.2, ease.inOutSine)) * singleA;
     if (hud > 0.01) {
-      const L = mse(bw, bb);
+      // numbers come from the whole frame's time, not from the motion-blur sub-sample, so digits never ghost
+      const nH = stepB((Math.round(gf) - CH.from) / FPS);
+      const [hw, hb] = hop(GOOD, nH);
+      const L = mse(hw, hb);
       const X = 968;
       text(ctx, "步数", X, 262, { size: 16, weight: 500, color: C.dim, font: "cjk", alpha: hud });
-      text(ctx, String(Math.floor(n + 1e-6)), X, 306, { size: 40, weight: 700, font: "mono", alpha: hud });
+      text(ctx, String(Math.floor(nH + 1e-6)), X, 306, { size: 40, weight: 700, font: "mono", alpha: hud });
       text(ctx, "损失 L", X, 358, { size: 16, weight: 500, color: C.dim, font: "cjk", alpha: hud });
       text(ctx, L >= 100 ? String(Math.round(L)) : fmt(L, 2), X, 402, { size: 40, weight: 700, font: "mono", color: L > 1.5 ? C.neg : C.text, alpha: hud });
     }

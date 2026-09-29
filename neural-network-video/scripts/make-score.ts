@@ -693,7 +693,7 @@ log(`bus levels before mixing — pad rms ${rms(PAD.L).toFixed(4)}, bass rms ${r
 scaleBus(PAD, 0.115 / Math.max(1e-9, rms(PAD.L)));
 scaleBus(BASS, 0.05 / Math.max(1e-9, rms(BASS.L)));
 scaleBus(BELL, 0.34 / Math.max(1e-9, peak(BELL.L)));
-scaleBus(SWO, 0.06 / Math.max(1e-9, rms(SWO.L)));
+scaleBus(SWO, 0.045 / Math.max(1e-9, rms(SWO.L)));
 scaleBus(THU, 0.42 / Math.max(1e-9, peak(THU.L)));
 
 // ------------------------------------------------------------------------------------------------- reverb (Freeverb-style, stereo)
@@ -747,6 +747,7 @@ const OR = new Float32Array(N);
 }
 
 // ------------------------------------------------------------------------------------------------- master
+log(`reverb return rms ${rms(OL).toFixed(4)} vs pad rms ${rms(PAD.L).toFixed(4)}`);
 log("master");
 const outL = new Float32Array(N);
 const outR = new Float32Array(N);
@@ -780,17 +781,22 @@ const outR = new Float32Array(N);
     outR[i] *= g;
   }
 }
-// soft limiter + normalisation to −1.5 dBFS peak
+// soft limiter (a gentle tanh, driven a little to lift the level of the pad), then normalise the peak to −1.9 dBFS (headroom for the AAC encoder)
 let pk = 0;
 for (let i = 0; i < N; i += 2) pk = Math.max(pk, Math.abs(outL[i]), Math.abs(outR[i]));
-const norm = 0.84 / Math.max(pk, 1e-9);
+const DRIVE = 1.35;
+const norm = (0.84 / Math.max(pk, 1e-9)) * DRIVE;
 log(`pre-normalisation peak ${pk.toFixed(3)} → gain ${norm.toFixed(2)}`);
+const sat = (x: number) => Math.tanh(x * norm);
+let pk2 = 0;
+for (let i = 0; i < N; i += 2) pk2 = Math.max(pk2, Math.abs(sat(outL[i])), Math.abs(sat(outR[i])));
+const fin = 0.8 / Math.max(pk2, 1e-9);
 const pcm = Buffer.alloc(N * 4);
 let clipped = 0;
 let sumSq = 0;
 for (let i = 0; i < N; i++) {
-  const l = Math.tanh(outL[i] * norm * 1.05) / Math.tanh(1.05);
-  const r = Math.tanh(outR[i] * norm * 1.05) / Math.tanh(1.05);
+  const l = sat(outL[i]) * fin;
+  const r = sat(outR[i]) * fin;
   const li = Math.max(-32767, Math.min(32767, Math.round(l * 32767)));
   const ri = Math.max(-32767, Math.min(32767, Math.round(r * 32767)));
   if (Math.abs(li) >= 32767 || Math.abs(ri) >= 32767) clipped++;
@@ -798,17 +804,19 @@ for (let i = 0; i < N; i++) {
   pcm.writeInt16LE(ri, i * 4 + 2);
   sumSq += l * l + r * r;
 }
-log(`RMS ${(20 * Math.log10(Math.sqrt(sumSq / (2 * N)))).toFixed(1)} dBFS, clipped samples: ${clipped}`);
+log(`RMS ${(10 * Math.log10(sumSq / (2 * N))).toFixed(1)} dBFS, clipped samples: ${clipped}`);
 // loudness by ten-second block (a sanity check on the shape of the piece)
 {
   const blocks: string[] = [];
   for (let b = 0; b < 60; b++) {
     let s = 0;
+    let n = 0;
     for (let i = b * 10 * SR; i < (b + 1) * 10 * SR; i += 5) {
-      const l = outL[i] * norm;
+      const l = sat(outL[i]) * fin;
       s += l * l;
+      n++;
     }
-    blocks.push((20 * Math.log10(Math.sqrt(s / (10 * SR / 5)) + 1e-9)).toFixed(0));
+    blocks.push((10 * Math.log10(s / n + 1e-12)).toFixed(0));
   }
   log(`per-10 s level (dB): ${blocks.join(" ")}`);
 }

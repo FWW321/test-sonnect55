@@ -291,7 +291,7 @@ function drawActC(ctx: CanvasRenderingContext2D, t: number) {
 const TILE = { cell: 38, gap: 16 };
 const tileX = (k: number) => 640 - (K * (TILE.cell * 3) + (K - 1) * TILE.gap) / 2 + k * (TILE.cell * 3 + TILE.gap);
 const TILE_Y = 210;
-const MAP_Y = 348;
+const MAP_Y = 368;
 
 const kAt = (t: number) => (N_SNAP - 1) * Math.pow(seg(t, T.train[0], T.train[1], ease.linear), 0.72);
 
@@ -351,7 +351,7 @@ function drawActD(ctx: CanvasRenderingContext2D, t: number) {
   text(ctx, "训练中的 8 个卷积核", 640 - (K * TILE.cell * 3 + (K - 1) * TILE.gap) / 2, 132, { size: 17, weight: 500, color: C.dim, font: "cjk", alpha: ro });
   text(ctx, `第 ${thousands(step)} 步`, 1140, 126, { size: 22, weight: 700, color: C.text, align: "right", font: "mono", alpha: ro });
   text(ctx, `损失 ${fmt(statAt(LOSS, k), 3)}  ·  正确率 ${Math.round(statAt(ACC, k) * 100)}%`, 1140, 152, { size: 15, weight: 500, color: C.dim, align: "right", font: "mono", alpha: ro });
-  text(ctx, "同一张 7，经过每个卷积核之后：", 640 - (K * TILE.cell * 3 + (K - 1) * TILE.gap) / 2, MAP_Y - 12, { size: 15, weight: 500, color: C.dim, font: "cjk", alpha: ro * seg(t, T.train[0] + 0.6, T.train[0] + 1.6, ease.out) });
+  text(ctx, "同一张 7，经过每个卷积核之后：", 640 - (K * TILE.cell * 3 + (K - 1) * TILE.gap) / 2, MAP_Y - 17, { size: 15, weight: 500, color: C.dim, font: "cjk", alpha: ro * seg(t, T.train[0] + 0.6, T.train[0] + 1.6, ease.out) });
 }
 
 // ---------------------------------------------------------------------------------- scene
