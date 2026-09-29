@@ -35,9 +35,9 @@ for (let i = 0; i < 30; i++) for (let d = 0; d < 10; d++) {
 
 // ------------------------------------------------------------------ parameters
 const rng = mulberry32(3);
-const INIT = +(process.env.INIT ?? 0.05);
+const INIT = +(process.env.INIT ?? 0.08);
 const W = Float64Array.from({ length: K * 9 }, () => gaussian(rng) * INIT);
-const B = new Float64Array(K).fill(0.05);
+const B = new Float64Array(K).fill(+(process.env.BIAS ?? 0.12));
 const V = Float64Array.from({ length: NC * F }, () => gaussian(rng) * Math.sqrt(1 / F));
 const C = new Float64Array(NC);
 const params = [W, B, V, C];
@@ -154,12 +154,12 @@ function evalSet(xs: Float32Array[], ys: number[]) {
 // ------------------------------------------------------------------ train
 const STEPS = +(process.env.STEPS ?? 1200);
 const LR = +(process.env.LR ?? 0.01);
-const L2 = +(process.env.L2 ?? 0.003);
+const L2 = +(process.env.L2 ?? 0.001);
 const BATCH = 32;
 const wanted = new Set<number>([0]);
 for (let s = 1; s < STEPS; s = Math.max(s + 1, Math.round(s * 1.13))) wanted.add(s);
 wanted.add(STEPS);
-const snaps: { step: number; kernels: number[]; loss: number; acc: number; testAcc: number }[] = [];
+const snaps: { step: number; kernels: number[]; bias: number[]; loss: number; acc: number; testAcc: number }[] = [];
 const r4 = (a: ArrayLike<number>) => Array.from(a, (x) => +x.toFixed(4));
 const order = Array.from({ length: X.length }, (_, i) => i);
 const shuf = mulberry32(9);
@@ -169,7 +169,7 @@ let cursor = order.length;
 function snap(step: number) {
   const tr = evalSet(X, Yl);
   const te = evalSet(TX, TY);
-  snaps.push({ step, kernels: r4(W), loss: +tr.loss.toFixed(4), acc: +tr.acc.toFixed(4), testAcc: +te.acc.toFixed(4) });
+  snaps.push({ step, kernels: r4(W), bias: r4(B), loss: +tr.loss.toFixed(4), acc: +tr.acc.toFixed(4), testAcc: +te.acc.toFixed(4) });
   console.log(`[${((Date.now() - t0) / 1000).toFixed(1)}s] step ${step}: loss ${tr.loss.toFixed(3)} acc ${(tr.acc * 100).toFixed(1)}% test ${(te.acc * 100).toFixed(1)}%`);
 }
 snap(0);
@@ -195,8 +195,21 @@ for (let step = 1; step <= STEPS; step++) {
   if (wanted.has(step)) snap(step);
 }
 
-const out = { K, kernelSize: 3, steps: snaps.map((s) => s.step), kernels: snaps.map((s) => s.kernels), loss: snaps.map((s) => s.loss), acc: snaps.map((s) => s.acc), testAcc: snaps.map((s) => s.testAcc), bias: r4(B) };
+const out = { K, kernelSize: 3, steps: snaps.map((s) => s.step), kernels: snaps.map((s) => s.kernels), biases: snaps.map((s) => s.bias), loss: snaps.map((s) => s.loss), acc: snaps.map((s) => s.acc), testAcc: snaps.map((s) => s.testAcc), bias: r4(B) };
 const file = join(root, "src", "data", "cnn.json");
 mkdirSync(dirname(file), { recursive: true });
 writeFileSync(file, JSON.stringify(out));
+// how many kernels are alive (respond to something) at the end
+{
+  const alive = new Array(K).fill(0);
+  for (const x of TX.slice(0, 60)) {
+    forward(x);
+    for (let k = 0; k < K; k++) {
+      let mx = 0;
+      for (let i = 0; i < O * O; i++) mx = Math.max(mx, act[k * O * O + i]);
+      if (mx > 0.15) alive[k]++;
+    }
+  }
+  console.log("alive (of 60 images):", alive.join(" "));
+}
 console.log("wrote", file);

@@ -243,3 +243,28 @@ export function drawWin3(ctx: Ctx, cx: number, cy: number, cell: number, alpha =
   rrect(ctx, cx - cell * 1.5 - 4, cy - cell * 1.5 - 4, cell * 3 + 8, cell * 3 + 8, 9, { stroke: "rgba(255,255,255,0.9)", lw: 2.2 });
   ctx.globalAlpha = a0;
 }
+
+// ------------------------------------------------------------------------------------------
+// Ch.11 → Ch.12: the row of feature maps reflows into a row of word tokens.
+// ------------------------------------------------------------------------------------------
+export const TOKENS = ["猫", "坐", "在", "垫子", "上", "因为", "它", "累了"];
+export const TOKEN_ROW = { y: 296, h: 58, gap: 14 } as const;
+
+/** Chip rectangles of the token row, centred on the stage. */
+export function tokenRects(): { x: number; y: number; w: number; h: number; label: string }[] {
+  const widths = TOKENS.map((t) => 36 * Array.from(t).length + 26);
+  const total = widths.reduce((a, b) => a + b, 0) + TOKEN_ROW.gap * (TOKENS.length - 1);
+  let x = 640 - total / 2;
+  return TOKENS.map((label, i) => {
+    const r = { x, y: TOKEN_ROW.y, w: widths[i], h: TOKEN_ROW.h, label };
+    x += widths[i] + TOKEN_ROW.gap;
+    return r;
+  });
+}
+
+/** A token chip: rounded plate with the word on it. */
+export function drawTokenChip(ctx: Ctx, r: { x: number; y: number; w: number; h: number; label: string }, alpha = 1, o: { fill?: string; stroke?: string; labelAlpha?: number } = {}) {
+  if (alpha <= 0.003) return;
+  rrect(ctx, r.x, r.y, r.w, r.h, 14, { fill: o.fill ?? "#0e1218", stroke: o.stroke ?? "rgba(255,255,255,0.3)", lw: 1.5, alpha });
+  text(ctx, r.label, r.x + r.w / 2, r.y + r.h / 2 + 8, { size: 24, weight: 600, color: C.text, align: "center", font: "cjk", alpha: alpha * (o.labelAlpha ?? 1) });
+}
