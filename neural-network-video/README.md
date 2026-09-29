@@ -4,7 +4,7 @@
 一个网络，再到损失、梯度下降、反向传播、训练、过拟合、卷积、注意力，最后把 13 002 个参数放进 1750 亿的星系里比一比。
 全部用 [Remotion](https://www.remotion.dev) 写成。画面里的曲线、激活、梯度、决策边界、卷积核都来自真实计算，**没有手绘的假曲线**；
 只有两处是明确标了「示意」的小例子（第 12 章的注意力小头和下一个 token 的概率），以及引用的公开参数量（LeNet / AlexNet / GPT-3）。
-成片：1920×1080 · 30 fps · 10:00 · H.264 + AAC（程序生成的配乐），`npm run render` 即可复现。
+成片：1920×1080 · 30 fps · 10:00 · H.264 + AAC（程序生成的配乐）。**母版就在 [`release/neural-network.mp4`](./release/neural-network.mp4)**（65 MiB），`npm run render` 可复现同样的画面。
 
 > English summary — a fully programmatic, deterministic Remotion film (1280×720 composition, rendered at 1920×1080) that teaches how neural
 > networks work in 14 chapters. Plots, activations, gradients, decision boundaries and kernels on screen come from real computations in
