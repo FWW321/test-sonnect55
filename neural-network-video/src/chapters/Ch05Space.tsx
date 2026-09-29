@@ -8,7 +8,7 @@ import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
 import { LEGEND, drawClassDot } from "../visuals/carry";
-import { ARM_N, circlesData, circlesLift, spiralStages } from "../visuals/toyNets";
+import { ARM_N, SPACE_FRAME, circlesData, circlesLift, spiralStages } from "../visuals/toyNets";
 import { Cam3, V3, drawBox, drawPolygon, project, viewVector } from "../visuals/view3d";
 
 /**
@@ -22,8 +22,8 @@ import { Cam3, V3, drawBox, drawPolygon, project, viewVector } from "../visuals/
 const CH = chapterById("space");
 const DUR = CH.dur / FPS;
 
-const F = { x: 430, y: 112, w: 400, h: 400 };
-const HALF = 1.15;
+const F = SPACE_FRAME;
+const HALF = SPACE_FRAME.half;
 const SC = F.w / (2 * HALF);
 const CX = F.x + F.w / 2;
 const CY = F.y + F.h / 2;

@@ -5,6 +5,7 @@ import { Ch02Neuron } from "./Ch02Neuron";
 import { Ch03Activation } from "./Ch03Activation";
 import { Ch04Forward } from "./Ch04Forward";
 import { Ch05Space } from "./Ch05Space";
+import { Ch06Loss } from "./Ch06Loss";
 import { Stub } from "./Stub";
 
 /** Chapter id → scene component. Each scene is a pure function of the master frame. */
@@ -14,7 +15,7 @@ export const CHAPTER_COMPONENTS: Record<ChapterId, FC> = {
   activation: Ch03Activation,
   forward: Ch04Forward,
   space: Ch05Space,
-  loss: Stub,
+  loss: Ch06Loss,
   descent: Stub,
   backprop: Stub,
   training: Stub,

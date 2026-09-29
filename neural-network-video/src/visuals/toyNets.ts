@@ -98,14 +98,16 @@ export interface SpiralStages {
   line: [number, number, number];
 }
 
-const EXT = 1.15;
+export const EXT = 1.15;
+/** The square that holds the spiral picture — shared by chapters 5 and 6 so the hand-off is pixel-identical. */
+export const SPACE_FRAME = { x: 430, y: 112, w: 400, h: 400, half: EXT };
 const GRID_EXT = 1.0;
 const GRID_STEP = 0.25;
 const GRID_SEG = 46;
 export const ARM_N = 160;
 
 /** Marching squares over p = 0.5. Returns segments in input space. */
-function contourSegments(field: Float32Array, n: number, lo: number, hi: number): number[] {
+export function contourSegments(field: Float32Array, n: number, lo: number, hi: number): number[] {
   const segs: number[] = [];
   const at = (i: number, j: number) => field[j * n + i] - 0.5;
   const xy = (i: number, j: number): [number, number] => [lo + ((hi - lo) * (i + 0.5)) / n, lo + ((hi - lo) * (j + 0.5)) / n];
