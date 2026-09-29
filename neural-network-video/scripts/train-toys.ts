@@ -9,7 +9,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { TOY } from "../src/nn/toys";
-import { Act, Net, train } from "../src/nn/mlp";
+import { Act, Net, evaluate, train } from "../src/nn/mlp";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const Y = (y: number[]) => y.map((v) => Float64Array.of(v));
@@ -66,6 +66,45 @@ const out: Record<string, unknown> = {};
   }
   out.spirals = { seed: chosen!.seed, sizes, acts, params: r4(chosen!.net.params), check: TOY.check(ds.X) };
   log(`spirals: chose seed ${chosen!.seed}`);
+}
+
+// ------------------------------------------------------------------ 3. the live-training run of chapters 9–10
+// One 2-16-16-1 tanh network, full-batch Adam on noisy spirals. It learns the shape within a few hundred
+// steps and then keeps "improving" on the training set while it gets worse on fresh points — the
+// classic overfitting curve, recorded step by step. Snapshots follow a geometric schedule so the film
+// can spend its time where things change.
+{
+  const tr = TOY.spiralsTrain();
+  const te = TOY.spiralsTest();
+  const sizes = [2, 16, 16, 1];
+  const acts: Act[] = ["tanh", "tanh", "sigmoid"];
+  const seed = 1;
+  const STEPS = 24000;
+  const net = Net.init(sizes, acts, seed);
+  const r = train(net, tr.X, Y(tr.y), { loss: "bce", steps: STEPS, lr: 0.01, snapEvery: 1 });
+  const want = new Set<number>();
+  for (let s = 0; s <= 12; s++) want.add(s);
+  for (let s = 12; s < STEPS; s = Math.max(s + 1, Math.round(s * 1.04))) want.add(s);
+  want.add(STEPS);
+  const steps = [...want].sort((a, b) => a - b);
+  const tmp = Net.init(sizes, acts, seed);
+  const testY = Y(te.y);
+  const snaps: number[][] = [];
+  const trainLoss: number[] = [];
+  const trainAcc: number[] = [];
+  const testLoss: number[] = [];
+  const testAcc: number[] = [];
+  for (const s of steps) {
+    tmp.params.set(r.snapshots[s]);
+    const e = evaluate(tmp, te.X, testY, "bce");
+    snaps.push(r4(r.snapshots[s]));
+    trainLoss.push(+r.loss[s].toFixed(5));
+    trainAcc.push(+r.acc[s].toFixed(4));
+    testLoss.push(+e.loss.toFixed(5));
+    testAcc.push(+e.acc.toFixed(4));
+  }
+  out.run = { seed, sizes, acts, steps, trainLoss, trainAcc, testLoss, testAcc, snaps, checkTrain: TOY.check(tr.X), checkTest: TOY.check(te.X) };
+  log(`run: ${steps.length} snapshots; train ${trainLoss[0]}→${trainLoss.at(-1)}, test ${testLoss[0]}→min ${Math.min(...testLoss)}→${testLoss.at(-1)}`);
 }
 
 const file = join(root, "src", "data", "toys.json");

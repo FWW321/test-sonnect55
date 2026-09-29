@@ -6,13 +6,17 @@
 import { circles, twoSpirals } from "./datasets";
 
 export const SPIRAL_TURNS = 0.9;
+export const RUN_NOISE = 0.07;
+export const RUN_TURNS = 1.5;
 
 export const TOY = {
   circles: () => circles(150, 0.03, 3),
   /** The "untangling" spirals of chapter 5: a bit under one full turn, so 2-wide layers can unwind them. */
   spirals: () => twoSpirals(100, 0.03, 5, SPIRAL_TURNS),
-  /** The harder, more wound spirals of chapter 9 (a wider network learns them live). */
-  spiralsTrain: () => twoSpirals(110, 0.04, 11, 1.75),
+  /** Chapters 9–10: noisy, more wound spirals; one network is trained on them live, then over-trained. */
+  spiralsTrain: () => twoSpirals(110, RUN_NOISE, 11, RUN_TURNS),
+  /** Fresh points from the same distribution — what the network has never seen (chapter 10). */
+  spiralsTest: () => twoSpirals(300, RUN_NOISE, 1011, RUN_TURNS),
   /** Fingerprint of a point set: any change to a generator changes it. */
   check: (X: ArrayLike<ArrayLike<number>>) => {
     let s = 0;

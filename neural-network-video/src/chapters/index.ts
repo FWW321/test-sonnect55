@@ -8,6 +8,7 @@ import { Ch05Space } from "./Ch05Space";
 import { Ch06Loss } from "./Ch06Loss";
 import { Ch07Descent } from "./Ch07Descent";
 import { Ch08Backprop } from "./Ch08Backprop";
+import { Ch09Training } from "./Ch09Training";
 import { Stub } from "./Stub";
 
 /** Chapter id → scene component. Each scene is a pure function of the master frame. */
@@ -20,7 +21,7 @@ export const CHAPTER_COMPONENTS: Record<ChapterId, FC> = {
   loss: Ch06Loss,
   descent: Ch07Descent,
   backprop: Ch08Backprop,
-  training: Stub,
+  training: Ch09Training,
   overfit: Stub,
   conv: Stub,
   attention: Stub,
