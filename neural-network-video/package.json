@@ -1,0 +1,40 @@
+{
+  "name": "neural-network-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A 10-minute Remotion film about how neural networks work — told as one continuous take.",
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "fonts": "node scripts/fetch-fonts.mjs",
+    "train": "tsx scripts/train-digits.ts",
+    "audio": "tsx scripts/make-score.ts",
+    "qa": "node scripts/qa-stills.mjs",
+    "render": "remotion render src/index.ts NeuralNetwork out/neural-network.mp4",
+    "render:draft": "remotion render src/index.ts NeuralNetwork out/draft.mp4 --scale=0.5 --crf=30"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.529",
+    "@remotion/cli": "4.0.529",
+    "@remotion/fonts": "4.0.529",
+    "@remotion/layout-utils": "4.0.529",
+    "@remotion/media": "4.0.529",
+    "@remotion/noise": "4.0.529",
+    "@remotion/paths": "4.0.529",
+    "@remotion/renderer": "4.0.529",
+    "@remotion/shapes": "4.0.529",
+    "@remotion/transitions": "4.0.529",
+    "katex": "^0.16.22",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "4.0.529"
+  },
+  "devDependencies": {
+    "@types/katex": "^0.16.7",
+    "@types/node": "^22.10.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "~5.9.3"
+  }
+}
