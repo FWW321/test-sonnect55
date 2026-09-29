@@ -10,8 +10,8 @@ import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
 import { UpdateRule } from "../ui/UpdateRule";
-import { FIELD9, drawRunField } from "../visuals/fieldView";
-import { indexOfStep, run, sampleAt, stepAt } from "../visuals/run";
+import { CHART9, CHART9_INNER, FIELD9, drawRunField } from "../visuals/fieldView";
+import { CH9_STEP, indexOfStep, run, sampleAt, stepAt } from "../visuals/run";
 
 /**
  * 09 · 训练 — Act A: the update rule (carried from chapter 8) becomes the fifth of five steps: sample,
@@ -24,8 +24,6 @@ const CH = chapterById("training");
 const DUR = CH.dur / FPS;
 const R = run();
 
-/** Chapter 9 plays the run up to this step; chapter 10 carries on from here. */
-export const CH9_STEP = 700;
 const K9 = indexOfStep(CH9_STEP);
 
 // ---------------------------------------------------------------------------------- timeline
@@ -181,13 +179,8 @@ function kAt(t: number): number {
   return K9 * Math.pow(u, 0.55);
 }
 
-const CHART = { x: 580, y: 176, w: 620, h: 372, svgW: 560, svgH: 340, pad: 60 };
-const inner = {
-  x0: CHART.x + (CHART.w - CHART.svgW) / 2 + CHART.pad,
-  x1: CHART.x + (CHART.w + CHART.svgW) / 2 - CHART.pad,
-  y0: CHART.y + (CHART.h - CHART.svgH) / 2 + CHART.pad,
-  y1: CHART.y + (CHART.h + CHART.svgH) / 2 - CHART.pad,
-};
+const CHART = CHART9;
+const inner = CHART9_INNER;
 const KN = Math.ceil(K9) + 1;
 const LOG = R.trainLoss.slice(0, KN).map((v) => Math.log10(Math.max(v, 1e-6)));
 const LMIN = Math.min(...LOG);

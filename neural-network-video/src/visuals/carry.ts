@@ -205,3 +205,41 @@ export function drawWNode(ctx: Ctx, x: number, y: number, k: number, alpha = 1) 
   if (la > 0.01) text(ctx, "w", x, y + r * 0.34, { size: r * 0.95, weight: 500, color: C.text, align: "center", font: "sans", italic: true, alpha: la });
   ctx.globalAlpha = a0;
 }
+
+// ------------------------------------------------------------------------------------------
+// Ch.10 → Ch.11: a 3×3 window of real pixels — the thing a convolution looks through.
+// ------------------------------------------------------------------------------------------
+export const WIN3 = { cx: 640, cy: 322, cell: 56 } as const;
+
+/** The 3×3 patch of the hero '7' that straddles the top bar: a horizontal edge, clearly visible. */
+export const WIN_PATCH = (() => {
+  const img = heroImage();
+  let best = { r: 8, c: 8, score: -1 };
+  for (let r = 3; r < 20; r++) {
+    for (let c = 3; c < 22; c++) {
+      // bright row above, dark row below, and a soft middle: the classic edge
+      const row = (rr: number) => (img[(r + rr) * 28 + c] + img[(r + rr) * 28 + c + 1] + img[(r + rr) * 28 + c + 2]) / 3;
+      const score = row(0) - row(2) - Math.abs(row(1) - 0.5) * 0.5;
+      if (score > best.score) best = { r, c, score };
+    }
+  }
+  const values: number[] = [];
+  for (let dr = 0; dr < 3; dr++) for (let dc = 0; dc < 3; dc++) values.push(+img[(best.r + dr) * 28 + best.c + dc].toFixed(2));
+  return { r: best.r, c: best.c, values };
+})();
+
+/** The window, drawn as nine grey cells with a bright frame. `numbers` prints each pixel value on its cell. */
+export function drawWin3(ctx: Ctx, cx: number, cy: number, cell: number, alpha = 1, numbers = false) {
+  if (alpha <= 0.003) return;
+  const a0 = ctx.globalAlpha;
+  ctx.globalAlpha = a0 * alpha;
+  for (let i = 0; i < 9; i++) {
+    const x = cx + ((i % 3) - 1.5) * cell;
+    const y = cy + (Math.floor(i / 3) - 1.5) * cell;
+    const v = WIN_PATCH.values[i];
+    rrect(ctx, x + 1.5, y + 1.5, cell - 3, cell - 3, 5, { fill: rgba(grey(v)), stroke: "rgba(255,255,255,0.18)", lw: 1 });
+    if (numbers) text(ctx, v.toFixed(1), x + cell / 2, y + cell / 2 + 5.5, { size: cell * 0.3, weight: 600, color: v > 0.55 ? "#0b0e14" : C.text, align: "center", font: "mono" });
+  }
+  rrect(ctx, cx - cell * 1.5 - 4, cy - cell * 1.5 - 4, cell * 3 + 8, cell * 3 + 8, 9, { stroke: "rgba(255,255,255,0.9)", lw: 2.2 });
+  ctx.globalAlpha = a0;
+}

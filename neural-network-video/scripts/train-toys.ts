@@ -8,7 +8,8 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { TOY } from "../src/nn/toys";
+import { twoSpirals } from "../src/nn/datasets";
+import { RUN_NOISE, RUN_TURNS, TOY } from "../src/nn/toys";
 import { Act, Net, evaluate, train } from "../src/nn/mlp";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -105,6 +106,37 @@ const out: Record<string, unknown> = {};
   }
   out.run = { seed, sizes, acts, steps, trainLoss, trainAcc, testLoss, testAcc, snaps, checkTrain: TOY.check(tr.X), checkTest: TOY.check(te.X) };
   log(`run: ${steps.length} snapshots; train ${trainLoss[0]}→${trainLoss.at(-1)}, test ${testLoss[0]}→min ${Math.min(...testLoss)}→${testLoss.at(-1)}`);
+}
+
+// ------------------------------------------------------------------ 4. the three remedies of chapter 10
+// Same recipe as the main run (full-batch Adam, 24 000 steps, same held-out points), three changes:
+// four times the data, a weight penalty, and stopping at the best moment of the main run.
+{
+  const te = TOY.spiralsTest();
+  const testY = Y(te.y);
+  const STEPS = 24000;
+  const finalTest = (net: Net) => evaluate(net, te.X, testY, "bce");
+  // (a) 4× data
+  const big = twoSpirals(440, RUN_NOISE, 21, RUN_TURNS);
+  const netA = Net.init([2, 16, 16, 1], ["tanh", "tanh", "sigmoid"], 1);
+  const trA = train(netA, big.X, Y(big.y), { loss: "bce", steps: STEPS, lr: 0.01, snapEvery: STEPS });
+  const eA = finalTest(netA);
+  // (b) a "simpler" model: same network, but weights are held small (L2 penalty) so the function stays smooth.
+  // (Merely shrinking the network does not help here — 8- and 10-wide tanh nets memorise the noise even harder.)
+  const small = TOY.spiralsTrain();
+  const L2 = 3e-4;
+  const netB = Net.init([2, 16, 16, 1], ["tanh", "tanh", "sigmoid"], 1);
+  const trB = train(netB, small.X, Y(small.y), { loss: "bce", steps: STEPS, lr: 0.01, l2: L2, snapEvery: STEPS });
+  const eB = finalTest(netB);
+  const R = out.run as { steps: number[]; testLoss: number[]; testAcc: number[]; trainLoss: number[] };
+  const iBest = R.testLoss.indexOf(Math.min(...R.testLoss));
+  out.remedies = {
+    overtrained: { step: R.steps.at(-1), testLoss: R.testLoss.at(-1), testAcc: R.testAcc.at(-1), trainLoss: R.trainLoss.at(-1) },
+    moreData: { n: big.X.length, testLoss: +eA.loss.toFixed(4), testAcc: +eA.acc.toFixed(4), trainLoss: +trA.loss.at(-1)!.toFixed(5) },
+    simpler: { l2: L2, testLoss: +eB.loss.toFixed(4), testAcc: +eB.acc.toFixed(4), trainLoss: +trB.loss.at(-1)!.toFixed(5) },
+    earlyStop: { index: iBest, step: R.steps[iBest], testLoss: R.testLoss[iBest], testAcc: R.testAcc[iBest] },
+  };
+  log(`remedies: ${JSON.stringify(out.remedies)}`);
 }
 
 const file = join(root, "src", "data", "toys.json");

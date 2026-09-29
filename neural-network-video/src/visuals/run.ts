@@ -102,3 +102,9 @@ export function indexOfStep(step: number): number {
   }
   return lo + (step - s[lo]) / (s[hi] - s[lo]);
 }
+
+/** Test-set results of the three remedies (chapter 10), computed offline by scripts/train-toys.ts. */
+export const remedies = raw.remedies;
+
+/** Chapter 9 plays the run up to this step; chapter 10 carries on from here. */
+export const CH9_STEP = 700;
