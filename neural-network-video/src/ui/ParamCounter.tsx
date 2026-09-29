@@ -7,8 +7,9 @@ import { C } from "../theme";
  * laid out from the start, so the number sits at the right and grows leftwards, like an odometer.
  */
 export const COUNTER_DIGITS = 12;
-export const ParamCounter: React.FC<{ value: number; opacity?: number; fontSize?: number; color?: string }> = ({ value, opacity = 1, fontSize = 104, color = C.text }) => (
-  <div style={{ position: "absolute", left: 0, top: -34, width: 1280, height: 720, opacity }}>
+export const COUNTER_TOP = -34;
+export const ParamCounter: React.FC<{ value: number; opacity?: number; fontSize?: number; color?: string; top?: number }> = ({ value, opacity = 1, fontSize = 104, color = C.text, top = COUNTER_TOP }) => (
+  <div style={{ position: "absolute", left: 0, top, width: 1280, height: 720, opacity }}>
     <RollingNumber value={value} digits={COUNTER_DIGITS} fontSize={fontSize} color={color} />
   </div>
 );
