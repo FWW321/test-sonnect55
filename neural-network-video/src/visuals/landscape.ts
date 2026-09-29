@@ -4,7 +4,7 @@
  * without a cut (the same trick chapter 5 uses for the lift into 3-D).
  */
 import { rgba, sequential } from "../lib/color";
-import { circle, glow, line, polyline, text } from "../lib/draw";
+import { arrow, circle, glow, line, polyline, text } from "../lib/draw";
 import { clamp, lerp } from "../lib/math";
 import { C, RGB_NEG } from "../theme";
 import { chapterById } from "../timeline";
@@ -15,12 +15,13 @@ import { Cam3, V3, project } from "./view3d";
 type Ctx = CanvasRenderingContext2D;
 
 export const DOM = { w0: -1.2, w1: 2.4, b0: -0.8, b1: 4.4 };
-export const NW = 44;
-export const NB = 38;
+/** Surface resolution (cells). Fine enough that the flat top-down view reads as a smooth heat-map. */
+export const NW = 88;
+export const NB = 76;
 const L_REF = 26; // loss that maps to the top of the colour scale
 
 /** Height mapping: ∝ L near the minimum (a true bowl), compressed far away. */
-export const heightOf = (L: number) => 0.3 * Math.log(1 + Math.min(L, 60));
+export const heightOf = (L: number) => 0.22 * Math.log(1 + Math.min(L, 60));
 const Z_TOP = heightOf(L_REF);
 
 /** Parameter → world coordinates in [-1, 1]² (+ height). */
@@ -112,14 +113,23 @@ export function drawSurface(ctx: Ctx, o: SurfaceOpts) {
     ctx.closePath();
     ctx.fillStyle = `rgb(${Math.round(col[0] * shade)},${Math.round(col[1] * shade)},${Math.round(col[2] * shade)})`;
     ctx.fill();
-    if (mesh > 0.02) {
+    // a hairline in the fill colour hides the anti-aliasing seams between neighbours
+    ctx.strokeStyle = ctx.fillStyle;
+    ctx.lineWidth = 0.7;
+    ctx.stroke();
+    // mesh lines on every second cell, so the wireframe keeps the same spacing at the finer resolution
+    if (mesh > 0.02 && (i % 2 === 0 || j % 2 === 0)) {
+      ctx.beginPath();
+      if (i % 2 === 0) {
+        ctx.moveTo(pr[a].x, pr[a].y);
+        ctx.lineTo(pr[d].x, pr[d].y);
+      }
+      if (j % 2 === 0) {
+        ctx.moveTo(pr[a].x, pr[a].y);
+        ctx.lineTo(pr[b].x, pr[b].y);
+      }
       ctx.strokeStyle = `rgba(7,9,13,${0.34 * mesh})`;
       ctx.lineWidth = 0.8;
-      ctx.stroke();
-    } else {
-      // hairline in the fill colour hides anti-aliasing seams between neighbours
-      ctx.strokeStyle = ctx.fillStyle;
-      ctx.lineWidth = 0.6;
       ctx.stroke();
     }
     // iso-loss contours of this quad — drawn inside the depth-sorted loop so nearer quads still hide them
@@ -177,14 +187,43 @@ export function drawPath(ctx: Ctx, cam: Cam3, pts: [number, number][], o: { colo
   if (o.dots) for (let i = 0; i < flat.length; i += 2) circle(ctx, flat[i], flat[i + 1], 2.6, { fill: o.color ?? "#ffffff", alpha: o.alpha ?? 1 });
 }
 
-/** Axis captions along the floor edges of the parameter plane. */
+/**
+ * The parameter plane's footprint: a faint floor outline plus the two axes, each an arrow running
+ * along one floor edge just outside the terrain, so "w" and "b" always sit next to the thing they measure.
+ */
 export function drawParamAxes(ctx: Ctx, cam: Cam3, alpha = 1, opts: { minimum?: boolean } = {}) {
-  const corner = (x: number, y: number) => project(cam, [x, y, 0]);
-  const a = corner(-1, -1);
-  const bx = corner(1, -1);
-  const by = corner(-1, 1);
-  text(ctx, "w →", (a.x + bx.x) / 2, Math.max(a.y, bx.y) + 26, { size: 17, weight: 500, color: C.dim, align: "center", font: "sans", italic: true, alpha });
-  text(ctx, "b ↑", Math.min(a.x, by.x) - 14, (a.y + by.y) / 2, { size: 17, weight: 500, color: C.dim, align: "right", font: "sans", italic: true, alpha });
+  if (alpha < 0.005) return;
+  const at = (x: number, y: number) => project(cam, [x, y, 0]);
+  const a = at(-1, -1);
+  const b = at(1, -1);
+  const d = at(1, 1);
+  const e = at(-1, 1);
+  polyline(ctx, [a.x, a.y, b.x, b.y, d.x, d.y, e.x, e.y], { close: true, color: "rgba(255,255,255,0.14)", lw: 1, alpha });
+  const ccx = (a.x + b.x + d.x + e.x) / 4;
+  const ccy = (a.y + b.y + d.y + e.y) / 4;
+  const axis = (P: { x: number; y: number }, Q: { x: number; y: number }, label: string) => {
+    const mx = (P.x + Q.x) / 2;
+    const my = (P.y + Q.y) / 2;
+    const len = Math.hypot(Q.x - P.x, Q.y - P.y) || 1;
+    const ux = (Q.x - P.x) / len;
+    const uy = (Q.y - P.y) / len;
+    let nx = -uy;
+    let ny = ux;
+    if (nx * (mx - ccx) + ny * (my - ccy) < 0) {
+      nx = -nx;
+      ny = -ny;
+    }
+    const half = Math.min(60, len * 0.28);
+    const off = 22;
+    const x0 = mx - ux * half + nx * off;
+    const y0 = my - uy * half + ny * off;
+    const x1 = mx + ux * half + nx * off;
+    const y1 = my + uy * half + ny * off;
+    arrow(ctx, x0, y0, x1, y1, { color: "rgba(154,164,181,0.85)", lw: 1.5, head: 8, alpha });
+    text(ctx, label, x1 + ux * 16 + nx * 3, y1 + uy * 16 + ny * 3 + 6, { size: 19, weight: 500, color: C.dim, align: "center", font: "sans", italic: true, alpha });
+  };
+  axis(a, b, "w");
+  axis(a, e, "b");
   void rgba;
   void opts;
 }
@@ -199,7 +238,7 @@ export const TILT_END = LOSS.from + 31.4 * FPS;
 
 export function restCam(gf: number): Cam3 {
   const drift = Math.max(0, (gf - TILT_END) / FPS);
-  return { yaw: 1.02 + 0.03 * drift, pitch: 0.98, scale: 180, cx: 640, cy: 388 };
+  return { yaw: 0.52 + 0.02 * drift, pitch: 0.74, scale: 172, cx: 640, cy: 392 };
 }
 
 /** The ball at the starting parameters and the marked minimum — drawn on top of any surface. */

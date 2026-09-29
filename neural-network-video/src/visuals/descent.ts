@@ -77,14 +77,18 @@ const memo = <T,>(f: () => T) => {
 };
 
 /** Step sizes of the "learning rate" scene. */
-export const LR = { small: 0.004, good: 0.045, large: 0.108 };
+export const LR = { small: 0.004, good: 0.03, osc: 0.08, large: 0.108 };
 export const RUNS = {
   small: memo(() => runGD(LR.small, 400)),
-  good: memo(() => runGD(LR.good, 500)),
-  large: memo(() => runGD(LR.large, 70)),
-  sgd: memo(() => runGD(0.09, 400)),
-  momentum: memo(() => runMomentum(0.03, 0.9, 400)),
-  adam: memo(() => runAdam(0.16, 400)),
+  good: memo(() => runGD(LR.good, 400)),
+  /** Just under the stability limit 2/λmax ≈ 0.106: overshoots the valley every step, but the swings shrink. */
+  osc: memo(() => runGD(LR.osc, 400)),
+  /** Just over it: every swing is 1.07× the last — divergence. */
+  large: memo(() => runGD(LR.large, 60)),
+  /** The race: plain gradient descent (the same run as `good`), momentum, Adam. */
+  sgd: memo(() => runGD(LR.good, 400)),
+  momentum: memo(() => runMomentum(0.03, 0.8, 400)),
+  adam: memo(() => runAdam(0.3, 400)),
 };
 
 /** Position along a run at fractional step n (linear between recorded steps). */

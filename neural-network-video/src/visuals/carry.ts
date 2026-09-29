@@ -5,7 +5,7 @@
  */
 import { CanvasRenderingContext2DLike, NeuronStyle } from "./types";
 import { RGB_NEG, RGB_POS } from "../theme";
-import { grey, rgba } from "../lib/color";
+import { grey, mixRGB, rgba } from "../lib/color";
 import { arrow, circle, glow, line, rrect, text } from "../lib/draw";
 import { ease, lerp, seg } from "../lib/math";
 import { FPS } from "../theme";
@@ -179,5 +179,29 @@ export function drawClassDot(ctx: Ctx, x: number, y: number, r: number, cls: "A"
   glow(ctx, x, y, r * 2.6, col, 0.4);
   circle(ctx, x, y, r, { fill: rgba(col, 1) });
   circle(ctx, x, y, r, { stroke: "rgba(255,255,255,0.55)", lw: 1.2 });
+  ctx.globalAlpha = a0;
+}
+
+// ------------------------------------------------------------------------------------------
+// Ch.7 → Ch.8: the point θ that gradient descent has been moving becomes the first node of a
+// computation graph — the orange "current parameters" ball swells into a labelled node "w".
+// ------------------------------------------------------------------------------------------
+export const W_NODE = { x: 250, y: 300, r: 30 } as const;
+
+/**
+ * The weight node. k ∈ [0,1] morphs the orange ball of chapter 7 (k = 0: 7 px, orange, haloed)
+ * into the graph node of chapter 8 (k = 1: dark disc, white ring, italic "w", faint orange halo —
+ * the parameter whose gradient the backward pass will deliver).
+ */
+export function drawWNode(ctx: Ctx, x: number, y: number, k: number, alpha = 1) {
+  const a0 = ctx.globalAlpha;
+  ctx.globalAlpha = a0 * alpha;
+  const e = ease.inOut(clamp(k));
+  const r = lerp(7, W_NODE.r, e);
+  glow(ctx, x, y, lerp(26, W_NODE.r * 1.9, e), RGB_NEG, lerp(0.85, 0.3, e));
+  circle(ctx, x, y, r, { fill: rgba(mixRGB(RGB_NEG, [12, 17, 24], e)) });
+  circle(ctx, x, y, r, { stroke: `rgba(255,255,255,${lerp(0.9, 0.85, e)})`, lw: lerp(1.6, 2, e) });
+  const la = clamp((e - 0.45) / 0.55);
+  if (la > 0.01) text(ctx, "w", x, y + r * 0.34, { size: r * 0.95, weight: 500, color: C.text, align: "center", font: "sans", italic: true, alpha: la });
   ctx.globalAlpha = a0;
 }
