@@ -108,6 +108,8 @@ export interface NetViewOpts {
   labels?: number;
   /** Draw pulses while a pass is running. */
   pulses?: boolean;
+  /** Multiplier on every connection's opacity (dims the wiring so an overlay can take over). */
+  edgeDim?: number;
   t: number;
 }
 
@@ -131,6 +133,7 @@ export function drawDigitNet(ctx: Ctx, o: NetViewOpts): Forward {
   const e23 = o.edges23 ?? 1;
   const dim2 = o.dimH2 ?? 1;
   const pulses = o.pulses !== false;
+  const ed = o.edgeDim ?? 1;
 
   // ------------------------------------------------ input → H1 edges (top pixel contributions)
   if (eIn * sh1 * showImg > 0.005) {
@@ -140,7 +143,7 @@ export function drawDigitNet(ctx: Ctx, o: NetViewOpts): Forward {
       const p = pxPos(e.i);
       const strength = Math.abs(e.c) / cmax;
       const active = fw.lit1 > 0 ? 0.6 * fw.lit1 : 0;
-      const alpha = (0.09 + 0.24 * strength + active * strength) * eIn * sh1 * showImg;
+      const alpha = (0.09 + 0.24 * strength + active * strength) * eIn * sh1 * showImg * ed;
       line(ctx, p.x, p.y, X_H1 - R_H - 2, H_YS[e.j], { color: rgba(colorOf(e.c), 1), lw: 0.6 + strength * 0.9, alpha });
       if (pulses && fw.e0 > 0 && fw.e0 < 1 && strength > 0.28) {
         const jitter = hash01(e.i * 16 + e.j, 4) * 0.25;
@@ -158,7 +161,7 @@ export function drawDigitNet(ctx: Ctx, o: NetViewOpts): Forward {
         const c = w * (a1[i] / n1);
         const s = Math.abs(w) / wmax12;
         const path = fw.lit2 > 0 ? Math.min(1, Math.abs(c) * 2.6) * fw.lit2 : 0;
-        const alpha = (0.07 + 0.2 * s + 0.6 * path) * e12 * sh2 * sh1 * dim2;
+        const alpha = (0.07 + 0.2 * s + 0.6 * path) * e12 * sh2 * sh1 * dim2 * ed;
         line(ctx, X_H1 + R_H + 2, H_YS[i], X_H2 - R_H - 2, H_YS[oo], { color: rgba(colorOf(w), 1), lw: 0.5 + s * 1.2 + path * 0.8, alpha });
         if (pulses && fw.e1 > 0 && fw.e1 < 1 && Math.abs(c) > 0.18) {
           const jitter = hash01(oo * 16 + i, 6) * 0.25;
@@ -177,7 +180,7 @@ export function drawDigitNet(ctx: Ctx, o: NetViewOpts): Forward {
         const c = w * (a2[i] / n2);
         const s = Math.abs(w) / wmax23;
         const path = fw.litO > 0 ? Math.min(1, Math.abs(c) * 1.6) * fw.litO : 0;
-        const alpha = (0.07 + 0.2 * s + 0.6 * path) * e23 * shO * sh2 * dim2;
+        const alpha = (0.07 + 0.2 * s + 0.6 * path) * e23 * shO * sh2 * dim2 * ed;
         line(ctx, X_H2 + R_H + 2, H_YS[i], X_OUT - R_OUT - 2, OUT_YS[oo], { color: rgba(colorOf(w), 1), lw: 0.5 + s * 1.2 + path * 0.8, alpha });
         if (pulses && fw.e2 > 0 && fw.e2 < 1 && Math.abs(c) > 0.3) {
           const jitter = hash01(oo * 16 + i, 8) * 0.25;

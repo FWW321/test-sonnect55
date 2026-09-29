@@ -50,7 +50,7 @@ const RAW: [ChapterId, string, number, string][] = [
   ["space", "折叠空间", 1740, "the misclassified points and the loss number"],
   ["loss", "损失", 1080, "the loss surface, with the current parameters marked on it"],
   ["descent", "梯度下降", 1380, "the parameter point becomes the first node, w, of a computation graph"],
-  ["backprop", "反向传播", 2010, "the weight-update rule; edges start to pulse"],
+  ["backprop", "反向传播", 2010, "the weight-update rule w ← w − η ∂L/∂w, centred"],
   ["training", "训练", 1320, "the trained decision boundary and the loss curve"],
   ["overfit", "过拟合", 840, "the small 3×3 window of pixels"],
   ["conv", "卷积", 1140, "feature-map cells reflow into a row of tokens"],
