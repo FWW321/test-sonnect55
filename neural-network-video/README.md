@@ -2,12 +2,15 @@
 
 一部 **10 分钟（18 000 帧 @ 30 fps）** 的中文短片，讲清楚神经网络是怎么工作的：从一个 `7` 的 784 个像素，到一个神经元、一层、
 一个网络，再到损失、梯度下降、反向传播、训练、过拟合、卷积、注意力，最后把 13 002 个参数放进 1750 亿的星系里比一比。
-全部用 [Remotion](https://www.remotion.dev) 写成，画面里出现的每一个数字都是真算出来的——**没有一帧是手绘的假曲线**。
+全部用 [Remotion](https://www.remotion.dev) 写成。画面里的曲线、激活、梯度、决策边界、卷积核都来自真实计算，**没有手绘的假曲线**；
+只有两处是明确标了「示意」的小例子（第 12 章的注意力小头和下一个 token 的概率），以及引用的公开参数量（LeNet / AlexNet / GPT-3）。
+成片：1920×1080 · 30 fps · 10:00 · H.264 + AAC（程序生成的配乐），`npm run render` 即可复现。
 
 > English summary — a fully programmatic, deterministic Remotion film (1280×720 composition, rendered at 1920×1080) that teaches how neural
-> networks work in 14 chapters. Every plot, activation, gradient, decision boundary, kernel and attention weight on screen comes from a real
-> computation in `src/nn` and `scripts/`; the score is procedural too (`scripts/make-score.ts`). Chapters are welded together by *carried
-> objects* (a pixel becomes an input, a plot grows into a full-screen plot, a parameter dot becomes a graph node…), so there is no cut.
+> networks work in 14 chapters. Plots, activations, gradients, decision boundaries and kernels on screen come from real computations in
+> `src/nn` and `scripts/` (the only illustrative parts — the toy attention head and the next-token probabilities in chapter 12 — are labelled
+> "示意" on screen); the score is procedural too (`scripts/make-score.ts`). Chapters are welded together by *carried objects* (a pixel becomes
+> an input, a plot grows into a full-screen plot, a parameter dot becomes a graph node…), so there is no cut.
 
 ## 参考的东西，和怎么用的
 

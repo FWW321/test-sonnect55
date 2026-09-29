@@ -191,7 +191,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   if (plots > 0.003) {
     const testShow = seg(t, T.test, T.test + 1.0, ease.out);
     drawRunField(ctx, FIELD9, kc, { alpha: plots, points: testShow > 0.01 ? "both" : "train", testAlpha: testShow, wrong: testShow * (1 - seg(t, T.rewind[0], T.rewind[1] - 0.6)) + seg(t, T.rewind[1] - 0.2, T.rewind[1] + 0.4) * 0.9 });
-    text(ctx, "它现在的判断", FIELD9.x, FIELD9.y - 14, { size: 16, weight: 500, color: C.dim, font: "cjk", alpha: plots });
+    text(ctx, "它现在的判断", FIELD9.x, FIELD9.y - 14, { size: 16, weight: 500, color: C.dim, font: "cjk", alpha: plots * seg(t, 5.2, 6.0, ease.out) });
     // legend for the rings
     const lg1 = seg(t, T.test + 0.4, T.test + 1.2, ease.out) * plots;
     if (lg1 > 0.01) {

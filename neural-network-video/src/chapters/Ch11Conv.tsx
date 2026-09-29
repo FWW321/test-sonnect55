@@ -216,15 +216,17 @@ function drawActB(ctx: CanvasRenderingContext2D, t: number) {
   // the carried window is the panel's first content: same cells, same numbers
   drawWin3Values(ctx, PAN.x, PAN.yWin, PAN.cell, wv, a);
   text(ctx, "×", PAN.x, (PAN.yWin + PAN.yKer) / 2 + 12, { size: 34, weight: 500, color: C.dim, align: "center", font: "sans", alpha: a });
-  const kA = seg(t, T.panel + 0.6, T.panel + 1.4, ease.out) * a;
+  // the kernel and the feature map become pair 0 of the next scene: they leave this panel the moment that pair starts moving
+  const handed = 1 - seg(t, T.pairs[0], T.pairs[0] + 0.25, ease.linear);
+  const kA = seg(t, T.panel + 0.6, T.panel + 1.4, ease.out) * a * handed;
   drawKernel(ctx, PAN.x, PAN.yKer, PAN.cell, KH, { alpha: kA, numbers: true, max: 1 });
   text(ctx, "卷积核（9 个权重）", PAN.x, PAN.yKer + 1.5 * PAN.cell + 30, { size: 15, weight: 500, color: C.dim, align: "center", font: "cjk", alpha: kA });
-  const sA = seg(t, T.panel + 1.4, T.panel + 2.2, ease.out) * a;
+  const sA = seg(t, T.panel + 1.4, T.panel + 2.2, ease.out) * a * handed;
   text(ctx, "对应相乘，再加起来", PAN.x, PAN.yWin - 1.5 * PAN.cell - 22, { size: 15, weight: 500, color: C.dim, align: "center", font: "cjk", alpha: sA });
   text(ctx, `= ${fmt(sum, 2)}`, PAN.x, PAN.yKer + 1.5 * PAN.cell + 68, { size: 30, weight: 700, color: sum >= 0 ? C.pos : C.neg, align: "center", font: "mono", alpha: sA });
 
   // feature map
-  const mA = seg(t, T.panel + 1.6, T.panel + 2.4, ease.out) * a;
+  const mA = seg(t, T.panel + 1.6, T.panel + 2.4, ease.out) * a * handed;
   const upTo = st.n < 0 ? -1 : st.n;
   drawFeatureMap(ctx, FM.x, FM.y, FM.cell, upTo, st.done, mA);
   text(ctx, "特征图", FM.x, FM.y - 12, { size: 15, weight: 500, color: C.dim, font: "cjk", alpha: mA });

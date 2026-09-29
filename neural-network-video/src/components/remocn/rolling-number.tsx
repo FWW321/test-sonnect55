@@ -81,6 +81,16 @@ function wheel(v: number, place: number): number {
   return digit + carry;
 }
 
+/** External-value mode: wheel `place` appears only in the last tenth before the number reaches 10^place. */
+function placeRevealExt(current: number, place: number): number {
+  if (place === 0) return 1;
+  return interpolate(current / 10 ** place, [0.9, 1], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: REVEAL_EASING,
+  });
+}
+
 function wrap10(value: number): number {
   return ((value % 10) + 10) % 10;
 }
@@ -174,7 +184,7 @@ export function RollingNumber({
         key={`d${place}`}
         value={wrap10(pos)}
         fontSize={fontSize}
-        reveal={placeReveal(current, place)}
+        reveal={value !== undefined ? placeRevealExt(current, place) : placeReveal(current, place)}
       />,
     );
   }

@@ -122,8 +122,8 @@ function drawRow(ctx: CanvasRenderingContext2D, t: number, alpha: number) {
       // vertical bar of the weight (grows up from a baseline) + percentage
       const bh = w[j] * 76 * so;
       const by = base + 100;
-      rrect(ctx, cx - 11, by - bh, 22, bh, 4, { fill: rgba(RGB_POS, 0.25 + 0.7 * w[j]), alpha: alpha * (1 - sumP * 0.5) });
-      text(ctx, `${Math.round(w[j] * 100)}%`, cx, by + 20, { size: 16, weight: 700, color: w[j] > 0.15 ? C.pos : C.dim, align: "center", font: MONO, alpha: alpha * so * (1 - sumP * 0.5) });
+      rrect(ctx, cx - 11, by - bh, 22, bh, 4, { fill: rgba(RGB_POS, 0.25 + 0.7 * w[j]), alpha: alpha * (1 - clamp(sumP * 2.2)) });
+      text(ctx, `${Math.round(w[j] * 100)}%`, cx, by + 20, { size: 16, weight: 700, color: w[j] > 0.15 ? C.pos : C.dim, align: "center", font: MONO, alpha: alpha * so * (1 - clamp(sumP * 2.2)) });
     }
   });
   if (sc > 0.01) text(ctx, "相似度  Q · K", RECTS[0].x - 22, vTop + 4 * 20 + 20, { size: 14, weight: 500, color: C.dim, align: "right", font: "cjk", alpha: alpha * sc * (1 - sumP) });
