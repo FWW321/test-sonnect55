@@ -188,7 +188,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
       const r = seg(t, 44.8 + d * 0.06, 45.6 + d * 0.06, ease.out);
       const x0 = Math.min(base, base + len * r);
       rrect(ctx, x0, OUT_YS[d] - 5, Math.abs(len * r), 10, 3, { fill: col, alpha: zAlpha * 0.9 });
-      text(ctx, (z[d] >= 0 ? "" : "−") + fmt(Math.abs(z[d]), 1), z[d] >= 0 ? base + len * r + 8 : base + len * r - 8, OUT_YS[d] + 5, {
+      text(ctx, fmt(z[d], 1), z[d] >= 0 ? base + len * r + 8 : base + len * r - 8, OUT_YS[d] + 5, {
         size: 13.5,
         weight: 500,
         color: C.dim,

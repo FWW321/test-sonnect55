@@ -410,7 +410,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   drawDiamond(ctx, t, seg(t, T.eStart, T.eStart + 0.6, ease.linear) * (1 - seg(t, 50.2, 51.2, ease.inOutSine)));
 
   // Act F: the real network fades out to leave the rule
-  const netA = seg(t, T.netStart, T.netStart + 0.2, ease.linear) * (1 - 0.86 * seg(t, T.formulaOut - 0.4, T.formulaOut + 0.8, ease.inOutSine));
+  const netA = seg(t, T.netStart, T.netStart + 0.2, ease.linear) * (1 - 0.86 * seg(t, T.formulaOut - 0.4, T.formulaOut + 0.8, ease.inOutSine)) * (1 - seg(t, DUR - 1.4, DUR - 0.3, ease.inOutSine));
   drawRealNet(ctx, t, netA);
 }
 

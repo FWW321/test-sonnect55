@@ -114,7 +114,8 @@ export const sec = (s: number, fps = 30) => Math.round(s * fps);
 
 /** Format with fixed decimals, using a true minus sign for negatives. */
 export const fmt = (x: number, d = 2) => {
-  const s = x.toFixed(d);
+  let s = x.toFixed(d);
+  if (/^-0(\.0*)?$/.test(s)) s = s.slice(1); // never print "−0.00"
   return s.startsWith("-") ? "−" + s.slice(1) : s;
 };
 

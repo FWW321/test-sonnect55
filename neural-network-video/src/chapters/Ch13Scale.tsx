@@ -156,11 +156,16 @@ const Overlay: React.FC = () => {
   );
 };
 
-export const Ch13Scale: React.FC = () => (
-  <>
-    <Canvas draw={({ ctx, gf }) => drawScene(ctx, gf)} />
-    <Overlay />
-    <ChapterCard />
-    <Captions />
-  </>
-);
+export const Ch13Scale: React.FC = () => {
+  const { t } = useChapterClock();
+  // real temporal blur (5 sub-frames, wide shutter) while the camera is actually travelling
+  const moving = (t > T.pull1[0] && t < T.pull1[1]) || (t > T.pull2[0] && t < T.pull2[1]) || (t > T.dive[0] && t < T.dive[1]);
+  return (
+    <>
+      <Canvas draw={({ ctx, gf }) => drawScene(ctx, gf)} blur={moving ? { samples: 5, shutter: 0.8 } : undefined} />
+      <Overlay />
+      <ChapterCard />
+      <Captions />
+    </>
+  );
+};

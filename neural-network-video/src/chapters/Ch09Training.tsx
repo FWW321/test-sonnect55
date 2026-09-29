@@ -233,7 +233,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   if (stage > 0.003) {
     drawRunChrome(ctx, t, stage * dim);
     const codeStep = codeLine(t) - 2;
-    drawStrip(ctx, t, seg(t, T.compact[1] - 0.3, T.compact[1] + 0.3, ease.out) * dim * (t > T.code ? 1 : 1), t >= T.code + 1.2 && codeStep >= 0 && codeStep < 5 ? codeStep : -1);
+    drawStrip(ctx, t, seg(t, T.compact[1] - 0.3, T.compact[1] + 0.3, ease.out) * dim * (1 - seg(t, DUR - 1.2, DUR - 0.4, ease.inOutSine)), t >= T.code + 1.2 && codeStep >= 0 && codeStep < 5 ? codeStep : -1);
   }
 }
 

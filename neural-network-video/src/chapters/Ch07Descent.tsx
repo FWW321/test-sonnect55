@@ -548,13 +548,17 @@ const Overlay: React.FC = () => {
   );
 };
 
-export const Ch07Descent: React.FC = () => (
-  <>
-    <Canvas draw={({ ctx, gf }) => drawScene(ctx, gf)} />
-    <Overlay />
-    <ChapterCard />
-    <Captions />
-  </>
-);
+export const Ch07Descent: React.FC = () => {
+  const { t } = useChapterClock();
+  const moving = (t > T.tiltFrom && t < T.mapSlide[1]) || (t > T.retract[0] && t < T.glide[1]);
+  return (
+    <>
+      <Canvas draw={({ ctx, gf }) => drawScene(ctx, gf)} blur={moving ? { samples: 4, shutter: 0.7 } : undefined} />
+      <Overlay />
+      <ChapterCard />
+      <Captions />
+    </>
+  );
+};
 
 void TAU;

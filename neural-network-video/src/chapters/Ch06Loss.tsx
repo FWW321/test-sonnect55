@@ -192,8 +192,8 @@ function drawRegression(ctx: CanvasRenderingContext2D, t: number, alpha: number,
     const a = seg(t, 15.6 + i * 0.05, 16.2 + i * 0.05, ease.out) * alpha;
     circle(ctx, px(p, REG.xs[i]), py(p, REG.ys[i]), 5.2, { fill: C.pos, stroke: "rgba(255,255,255,0.7)", lw: 1, alpha: a });
   }
-  text(ctx, `w = ${w < 0 ? "−" : ""}${fmt(Math.abs(w), 2)}`, p.x + 4, p.y + p.h + 44, { size: 18, weight: 600, color: C.text, font: "mono", alpha });
-  text(ctx, `b = ${b < 0 ? "−" : ""}${fmt(Math.abs(b), 2)}`, p.x + 150, p.y + p.h + 44, { size: 18, weight: 600, color: C.text, font: "mono", alpha });
+  text(ctx, `w = ${fmt(w, 2)}`, p.x + 4, p.y + p.h + 44, { size: 18, weight: 600, color: C.text, font: "mono", alpha });
+  text(ctx, `b = ${fmt(b, 2)}`, p.x + 150, p.y + p.h + 44, { size: 18, weight: 600, color: C.text, font: "mono", alpha });
 }
 
 // ---------------------------------------------------------------------------------- Act D: terrain

@@ -197,14 +197,14 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
     const ro = seg(t, 2.8, 3.6, ease.out) * (1 - seg(t, 6.9, 7.6, ease.in));
     if (ro > 0.01) {
       const zz = zP1(t);
-      text(ctx, `z = ${zz >= 0 ? "" : "−"}${fmt(Math.abs(zz), 2)}`, 940, 352, { size: 24, weight: 600, color: C.text, font: "mono", alpha: ro });
+      text(ctx, `z = ${fmt(zz, 2)}`, 940, 352, { size: 24, weight: 600, color: C.text, font: "mono", alpha: ro });
       text(ctx, `a = ${fmt(sigmoid(zz), 2)}`, 940, 392, { size: 24, weight: 600, color: C.pos, font: "mono", alpha: ro });
     }
     // shared z readout under the three panels
     const zr = seg(t, 9.4, 10.2, ease.out) * out;
     if (zr > 0.01) {
       const zz = zP2(t);
-      text(ctx, `z = ${zz >= 0 ? "" : "−"}${fmt(Math.abs(zz), 2)}`, 640, 584, { size: 21, weight: 600, color: C.dim, align: "center", font: "mono", alpha: zr });
+      text(ctx, `z = ${fmt(zz, 2)}`, 640, 584, { size: 21, weight: 600, color: C.dim, align: "center", font: "mono", alpha: zr });
     }
   }
 

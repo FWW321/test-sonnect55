@@ -242,7 +242,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
     ctx.translate(WIN3.cx, WIN3.cy);
     ctx.scale(s, s);
     ctx.translate(-WIN3.cx, -WIN3.cy);
-    drawWin3(ctx, WIN3.cx, WIN3.cy, WIN3.cell, wA);
+    drawWin3(ctx, WIN3.cx, WIN3.cy, WIN3.cell, wA, true);
     ctx.restore();
   }
   void RGB_NEG;
