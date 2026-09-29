@@ -10,6 +10,7 @@
     "train": "tsx scripts/train-digits.ts && tsx scripts/train-toys.ts && tsx scripts/train-cnn.ts",
     "train:toys": "tsx scripts/train-toys.ts",
     "train:cnn": "tsx scripts/train-cnn.ts",
+    "fit:attention": "tsx scripts/fit-attention.ts",
     "audio": "tsx scripts/make-score.ts",
     "qa": "node scripts/qa-stills.mjs",
     "render": "remotion render src/index.ts NeuralNetwork out/neural-network.mp4",

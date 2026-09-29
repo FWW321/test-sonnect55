@@ -8,7 +8,7 @@ licensed; see [`LICENSE`](./LICENSE).
 |---|---|---|
 | `mask-reveal-up` | chapter title cards (`ui/ChapterCard.tsx`) | `tracking` + `align` props — CJK glyphs want default tracking, and the card sits at the left edge |
 | `soft-blur-in` | the film title and the closing title | `tracking` + `align` props (same reason) |
-| `rolling-number` | the parameter odometer in *规模* | JetBrains Mono comes from the bundled `public/fonts` instead of `@remotion/google-fonts` |
+| `rolling-number` | the parameter odometers in *前向传播* and *规模* | JetBrains Mono comes from the bundled `public/fonts` instead of `@remotion/google-fonts`; `value` + `digits` props to drive the wheels from outside (the odometer of *规模* is scrubbed by the chapter clock) |
 | `glass-code-block` | the 8-line training loop in *训练* | Python keywords, `#` comments (also trailing), an `activeLine` prop that dims the other lines and marks the one being narrated, palette limited to the film's cyan/orange, `backdrop-filter` and the large drop shadow removed |
 | `animated-line-chart` | the loss curve in *训练* | `progress` prop so the draw-on follows the training step instead of an internal spring, `gridCols` prop, glow filters removed |
 

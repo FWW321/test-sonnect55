@@ -19,6 +19,10 @@ export interface RollingNumberProps {
   fontSize?: number;
   color?: string;
   speed?: number;
+  /** Local patch: drive the odometer from outside — the exact value to show. Overrides from/to/speed. */
+  value?: number;
+  /** Local patch: number of digit wheels to lay out (fixes the width, so the number grows leftwards). */
+  digits?: number;
 }
 
 const COUNT_PORTION = 0.8;
@@ -66,6 +70,15 @@ function placeReveal(current: number, place: number): number {
     extrapolateRight: "clamp",
     easing: REVEAL_EASING,
   });
+}
+
+/** Odometer wheel: shows the integer digit, and only turns during the last tenth of the wheel below it. */
+function wheel(v: number, place: number): number {
+  const digit = Math.floor(v / 10 ** place) % 10;
+  if (place === 0) return v % 10;
+  const low = ((v / 10 ** (place - 1)) % 10) / 10; // position of the wheel below, 0..1
+  const carry = Math.min(1, Math.max(0, (low - 0.9) * 10));
+  return digit + carry;
 }
 
 function wrap10(value: number): number {
@@ -121,6 +134,8 @@ export function RollingNumber({
   fontSize = 120,
   color = "#171717",
   speed = 1,
+  value,
+  digits: digitsProp,
 }: RollingNumberProps) {
   const frame = useCurrentFrame();
   const { durationInFrames } = useVideoConfig();
@@ -129,10 +144,10 @@ export function RollingNumber({
   const end = Math.max(0, Math.round(to));
 
   const e = easedProgress(frame, speed, durationInFrames);
-  const current = start + e * (end - start);
+  const current = value !== undefined ? Math.max(0, value) : start + e * (end - start);
 
-  const maxVal = Math.max(start, end);
-  const digits = String(maxVal);
+  const maxVal = Math.max(start, end, value ?? 0);
+  const digits = digitsProp ? "0".repeat(digitsProp) : String(maxVal);
   const cellHeight = fontSize * 1.1;
 
   const cells: React.ReactNode[] = [];
@@ -152,7 +167,8 @@ export function RollingNumber({
     const pow = 10 ** place;
     const startDigit = Math.floor(start / pow) % 10;
     const travel = placeTravel(start, end, place);
-    const pos = startDigit + e * travel;
+    // (patch) with an external value each wheel simply shows (value / 10^place) mod 10
+    const pos = value !== undefined ? wheel(current, place) : startDigit + e * travel;
     cells.unshift(
       <DigitColumn
         key={`d${place}`}
