@@ -45,10 +45,10 @@ const T = {
   mapSlide: [17.9, 19.3] as const,
   // Act C
   runsC: [
-    { t0: 19.0, t1: 21.0 },
-    { t0: 21.2, t1: 23.2 },
-    { t0: 23.4, t1: 25.6 },
-    { t0: 25.8, t1: 28.0 },
+    { t0: 18.9, t1: 20.8 },
+    { t0: 21.0, t1: 22.9 },
+    { t0: 23.1, t1: 25.0 },
+    { t0: 25.3, t1: 27.3 },
   ],
   cSteps: 60,
   // Act D
@@ -334,7 +334,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   }
 
   // ---- Act C: four learning rates
-  const cA = seg(t, T.mapSlide[0] + 0.3, T.mapSlide[1], ease.out) * (1 - seg(t, 28.2, 29.0, ease.inOutSine));
+  const cA = seg(t, T.mapSlide[0] + 0.3, T.mapSlide[1], ease.out) * (1 - seg(t, 28.3, 29.0, ease.inOutSine));
   if (cA > 0.003 && inActs) {
     drawLandscapeMarkers(ctx, cam, { ball: null, alpha: terrainA, minimum: 1 });
     drawLossAxes(ctx, T.cSteps, [0, 20, 40, 60], cA);
@@ -468,18 +468,21 @@ function drawActE(ctx: CanvasRenderingContext2D, t: number) {
     const lineA = clamp(0.24 * (2776 / nCount), 0.035, 0.5) * shrink * shrink;
     ctx.save();
     ctx.globalCompositeOperation = "lighter";
-    ctx.beginPath();
-    for (let i = 0; i < Math.min(nCount, N_DIR); i++) {
-      const a = BURST.ang[i];
-      const L = BURST.len[i] * shrink;
-      const ca = Math.cos(a);
-      const sa = Math.sin(a);
-      ctx.moveTo(CX - ca * L, CY - sa * L);
-      ctx.lineTo(CX + ca * L, CY + sa * L);
+    // positive directions cyan, negative orange — dense enough in the core to add up to white
+    for (let half = 0; half < 2; half++) {
+      ctx.beginPath();
+      for (let i = half; i < Math.min(nCount, N_DIR); i += 2) {
+        const a = BURST.ang[i];
+        const L = BURST.len[i] * shrink;
+        const ca = Math.cos(a);
+        const sa = Math.sin(a);
+        ctx.moveTo(CX - ca * L, CY - sa * L);
+        ctx.lineTo(CX + ca * L, CY + sa * L);
+      }
+      ctx.strokeStyle = half === 0 ? `rgba(90,205,245,${lineA * 1.15})` : `rgba(255,150,80,${lineA * 1.15})`;
+      ctx.lineWidth = 0.8;
+      ctx.stroke();
     }
-    ctx.strokeStyle = `rgba(200,220,255,${lineA})`;
-    ctx.lineWidth = 0.8;
-    ctx.stroke();
     // the first few stay bright: they are the ones we could still draw one by one
     ctx.beginPath();
     for (let i = 0; i < Math.min(nCount, 24); i++) {

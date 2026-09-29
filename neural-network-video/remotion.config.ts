@@ -6,6 +6,7 @@ Config.setCodec("h264");
 Config.setOverwriteOutput(true);
 Config.setPixelFormat("yuv420p");
 Config.setColorSpace("bt709");
+Config.setCrf(21);
 
 // In sandboxes where Remotion cannot download its own Chrome, point at any Chromium build:
 //   REMOTION_BROWSER=/path/to/chrome npm run render
