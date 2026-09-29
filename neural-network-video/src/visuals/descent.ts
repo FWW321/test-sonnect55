@@ -1,7 +1,7 @@
 /**
  * Real optimiser trajectories on the regression landscape. For this problem the Hessian of the MSE has
- * eigenvalues ≈ 20 (across the ravine) and ≈ 0.38 (along it), so plain gradient descent is stable only for
- * step sizes below 2/20 = 0.1 — and is painfully slow along the valley floor. Everything the film shows in
+ * eigenvalues ≈ 19.13 (across the ravine) and ≈ 0.345 (along it), so plain gradient descent is stable only for
+ * step sizes below 2/19.13 ≈ 0.1045 — and is painfully slow along the valley floor (condition number ≈ 55). Everything the film shows in
  * chapter 7 (crawling, smooth, diverging; SGD vs momentum vs Adam) is computed here, not drawn by hand.
  */
 import { mse, mseGrad, START } from "./regression";
@@ -81,7 +81,7 @@ export const LR = { small: 0.004, good: 0.03, osc: 0.08, large: 0.108 };
 export const RUNS = {
   small: memo(() => runGD(LR.small, 400)),
   good: memo(() => runGD(LR.good, 400)),
-  /** Just under the stability limit 2/λmax ≈ 0.106: overshoots the valley every step, but the swings shrink. */
+  /** Just under the stability limit 2/λmax ≈ 0.1045: overshoots the valley every step, but the swings shrink. */
   osc: memo(() => runGD(LR.osc, 400)),
   /** Just over it: every swing is 1.07× the last — divergence. */
   large: memo(() => runGD(LR.large, 60)),
