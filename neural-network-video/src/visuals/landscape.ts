@@ -3,7 +3,7 @@
  * looking straight down it *is* a heat-map of the parameter plane, so a 2-D panel can tilt into terrain
  * without a cut (the same trick chapter 5 uses for the lift into 3-D).
  */
-import { rgba, sequential } from "../lib/color";
+import { sequential } from "../lib/color";
 import { arrow, circle, glow, line, polyline, text } from "../lib/draw";
 import { clamp, lerp } from "../lib/math";
 import { C, RGB_NEG } from "../theme";
@@ -191,7 +191,7 @@ export function drawPath(ctx: Ctx, cam: Cam3, pts: [number, number][], o: { colo
  * The parameter plane's footprint: a faint floor outline plus the two axes, each an arrow running
  * along one floor edge just outside the terrain, so "w" and "b" always sit next to the thing they measure.
  */
-export function drawParamAxes(ctx: Ctx, cam: Cam3, alpha = 1, opts: { minimum?: boolean } = {}) {
+export function drawParamAxes(ctx: Ctx, cam: Cam3, alpha = 1) {
   if (alpha < 0.005) return;
   const at = (x: number, y: number) => project(cam, [x, y, 0]);
   const a = at(-1, -1);
@@ -224,8 +224,6 @@ export function drawParamAxes(ctx: Ctx, cam: Cam3, alpha = 1, opts: { minimum?: 
   };
   axis(a, b, "w");
   axis(a, e, "b");
-  void rgba;
-  void opts;
 }
 
 // ------------------------------------------------------------------------------------------

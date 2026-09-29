@@ -1,15 +1,15 @@
 import { Canvas } from "../lib/canvas";
 import { diverging, rgba } from "../lib/color";
-import { arrow, circle, glow, line, rrect, text } from "../lib/draw";
+import { glow, rrect, text } from "../lib/draw";
 import { clamp, ease, fmt, lerp, seg } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
-import { C, FPS, RGB_NEG, RGB_POS } from "../theme";
+import { C, FPS, RGB_POS } from "../theme";
 import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
 import { ParamCounter } from "../ui/ParamCounter";
 import { TOKENS, TOKEN_ROW, drawTokenChip, tokenRects } from "../visuals/carry";
-import { ATT, KEYS, N_TOK, Q, QUERY, ROUNDS, V, dot, mix, scores } from "../visuals/attention";
+import { ATT, KEYS, N_TOK, Q, QUERY, ROUNDS, V, mix, scores } from "../visuals/attention";
 
 /**
  * 12 · 注意力 — the row of tokens (carried from chapter 11) gets a vector per token; the token "它" asks
@@ -179,8 +179,6 @@ function drawRow(ctx: CanvasRenderingContext2D, t: number, alpha: number) {
       text(ctx, terms + " …", resX + 46, resTop + 44, { size: 15, weight: 600, color: C.text, font: MONO, alpha: alpha * done });
     }
   }
-  void arrow;
-  void dot;
 }
 
 // ---------------------------------------------------------------------------------- the matrix
@@ -212,24 +210,6 @@ function drawMatrix(ctx: CanvasRenderingContext2D, t: number, alpha: number) {
 }
 
 // ---------------------------------------------------------------------------------- next-token prediction
-function rowLayout(count: number): { x: number; w: number }[] {
-  const widths = (n: number) => (n < TOKENS.length ? RECTS[n].w : 36 * 2 + 26);
-  const list: { x: number; w: number }[] = [];
-  const full = Math.floor(count);
-  const frac = count - full;
-  let total = 0;
-  for (let i = 0; i < full; i++) total += (i < RECTS.length ? RECTS[i].w : 98) + TOKEN_ROW.gap;
-  total += frac * (98 + TOKEN_ROW.gap) - TOKEN_ROW.gap;
-  let x = 640 - total / 2;
-  for (let i = 0; i < full; i++) {
-    const w = i < RECTS.length ? RECTS[i].w : 98;
-    list.push({ x, w });
-    x += w + TOKEN_ROW.gap;
-  }
-  void widths;
-  return list;
-}
-
 const APPENDED: { t: string; w: number }[] = ROUNDS.map((r) => ({ t: r.picks[0].t, w: 36 * Array.from(r.picks[0].t).length + 26 }));
 
 function drawPredict(ctx: CanvasRenderingContext2D, t: number, alpha: number) {
@@ -301,8 +281,6 @@ function drawPredict(ctx: CanvasRenderingContext2D, t: number, alpha: number) {
       text(ctx, `${Math.round(p.p * 100 * grow)}%`, lerp(bx + 450, 900, cp), byy + 6, { size: 17, weight: 700, color: col, font: MONO, alpha: alpha * fade * (1 - cp) });
     });
   }
-  void RGB_NEG;
-  void circle;
 }
 
 // ---------------------------------------------------------------------------------- scene

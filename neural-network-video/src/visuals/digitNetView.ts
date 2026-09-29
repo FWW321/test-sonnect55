@@ -4,8 +4,8 @@
  * forward pass (see visuals/data.ts).
  */
 import { grey, rgba } from "../lib/color";
-import { arrow, circle, glow, heatmap, line, pulse, rrect, text } from "../lib/draw";
-import { clamp, ease, hash01, lerp, seg } from "../lib/math";
+import { heatmap, line, pulse, rrect, text } from "../lib/draw";
+import { clamp, ease, hash01, seg } from "../lib/math";
 import { C, RGB, RGB_NEG, RGB_POS } from "../theme";
 import { H1, drawSmallNeuron } from "./carry";
 import { Forward, digitNet, forwardDigit } from "./data";
@@ -226,9 +226,5 @@ export function drawDigitNet(ctx: Ctx, o: NetViewOpts): Forward {
     text(ctx, "隐藏层 2", X_H2, y, { size: 16, weight: 500, color: C.dim, align: "center", font: "cjk", alpha: lab * sh2 * dim2 });
     text(ctx, "输出", X_OUT + 10, y, { size: 16, weight: 500, color: C.dim, align: "center", font: "cjk", alpha: lab * shO * Math.max(dim2, 0.5) });
   }
-  void arrow;
-  void circle;
-  void glow;
-  void lerp;
   return f;
 }

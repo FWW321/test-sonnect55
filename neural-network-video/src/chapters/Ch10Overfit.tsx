@@ -1,9 +1,9 @@
 import { Canvas } from "../lib/canvas";
 import { rgba } from "../lib/color";
 import { circle, line, polyline, rrect, text } from "../lib/draw";
-import { clamp, ease, fmt, lerp, seg, thousands } from "../lib/math";
+import { ease, fmt, lerp, seg, thousands } from "../lib/math";
 import { chapterClock } from "../lib/time";
-import { C, FPS, RGB_NEG, RGB_POS } from "../theme";
+import { C, FPS, RGB_POS } from "../theme";
 import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
@@ -204,7 +204,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
       text(ctx, "判断错了", FIELD9.x + 262, FIELD9.y + FIELD9.h + 31, { size: 14, weight: 500, color: C.dim, font: "cjk", alpha: lg1 });
     }
     // read-outs
-    const kp = kRun(t);
     const step = Math.round(stepAt(kc));
     const trainL = sampleAt(R.trainLoss, kc);
     const testL = sampleAt(R.testLoss, kc);
@@ -229,7 +228,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
     ctx.globalAlpha *= showTest;
     ro(IN.x0 + 320, "没见过的数据上的损失", fmt(testL, 2), testL > 0.3 ? "#ffffff" : C.pos);
     ctx.restore();
-    void kp;
     drawChart(ctx, t, chartA);
     drawBars(ctx, t, plots * seg(t, T.bars[0], T.bars[1], ease.inOutSine));
   }
@@ -245,8 +243,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
     drawWin3(ctx, WIN3.cx, WIN3.cy, WIN3.cell, wA, true);
     ctx.restore();
   }
-  void RGB_NEG;
-  void clamp;
 }
 
 export const Ch10Overfit: React.FC = () => (

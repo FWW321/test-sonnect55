@@ -1,7 +1,7 @@
 import { Canvas } from "../lib/canvas";
 import { classField, rgba } from "../lib/color";
-import { circle, heatmap, line, mathText, polyline, rrect, text } from "../lib/draw";
-import { clamp, ease, fmt, keyframes, lerp, seg } from "../lib/math";
+import { circle, heatmap, line, polyline, rrect, text } from "../lib/draw";
+import { clamp, ease, keyframes, lerp, seg } from "../lib/math";
 import { chapterClock } from "../lib/time";
 import { C, FPS, RGB_NEG, RGB_POS } from "../theme";
 import { chapterById } from "../timeline";
@@ -417,7 +417,6 @@ function drawSpirals(ctx: CanvasRenderingContext2D, t: number) {
   }
   const bA = seg(t, T.cut, T.cut + 1.0, ease.out);
   if (bA > 0.01 && !unfold) text(ctx, "一条直线", F.x + F.w + 20, F.y + 30, { size: 18, weight: 600, color: C.text, font: "cjk", alpha: bA * (1 - seg(t, T.unfold[0], T.unfold[0] + 0.8)) });
-  void fmt;
 }
 
 function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
@@ -437,4 +436,3 @@ export const Ch05Space: React.FC = () => (
   </>
 );
 
-void mathText;

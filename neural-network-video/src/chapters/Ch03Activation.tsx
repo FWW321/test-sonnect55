@@ -3,12 +3,12 @@ import { rgba } from "../lib/color";
 import { circle, line, polyline, rrect, text } from "../lib/draw";
 import { clamp, ease, fmt, keyframes, lerp, seg } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
-import { C, FPS, RGB_NEG, RGB_POS } from "../theme";
+import { C, FPS, RGB_POS } from "../theme";
 import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
 import { Formula } from "../ui/Formula";
-import { gelu, relu, sigmoid, tanh } from "../visuals/activations";
+import { relu, sigmoid, tanh } from "../visuals/activations";
 import { H1, PLOT_BIG, SIG_WIN, drawSmallNeuron } from "../visuals/carry";
 import {
   Frame,
@@ -44,7 +44,6 @@ const FNS = [
   { name: "Tanh", fn: tanh, y0: -1.2, y1: 1.2, ticks: [-1, 0, 1], tex: String.raw`\dfrac{e^{z}-e^{-z}}{e^{z}+e^{-z}}` },
   { name: "ReLU", fn: relu, y0: -0.4, y1: 3.2, ticks: [0, 1, 2, 3], tex: String.raw`\max(0,\;z)` },
 ] as const;
-void gelu;
 
 const zP1 = (t: number) =>
   keyframes(t, [
@@ -339,4 +338,3 @@ export const Ch03Activation: React.FC = () => (
   </>
 );
 
-void RGB_NEG;

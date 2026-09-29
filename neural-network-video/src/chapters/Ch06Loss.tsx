@@ -288,7 +288,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
       drawLandscapeRest(ctx, gf, {});
     }
   }
-  void mse;
 }
 
 const Overlay: React.FC = () => {

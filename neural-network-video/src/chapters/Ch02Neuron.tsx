@@ -1,9 +1,9 @@
 import { Canvas } from "../lib/canvas";
 import { mixRGB, rgba } from "../lib/color";
-import { circle, glow, line, pulse, rrect, text } from "../lib/draw";
+import { circle, line, pulse, rrect, text } from "../lib/draw";
 import { clamp, ease, fmt, hash01, lerp, seg } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
-import { C, FPS, RGB_NEG, RGB_POS, RGB_WHITE } from "../theme";
+import { C, RGB_NEG, RGB_POS, RGB_WHITE } from "../theme";
 import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
@@ -35,7 +35,6 @@ const calc = (w: number[], b = B0) => {
   const z = p[0] + p[1] + p[2] + b;
   return { p, z, a: sigmoid(z) };
 };
-const BASE = calc(W0);
 
 const T = {
   votes: [1.8, 6.6],
@@ -202,7 +201,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   }
 
   // ---------------------------------------------------------------- neuron + z readout
-  const arrivals = [0, 1, 2].map((k) => seg(t, T.products + k * 2.1 + 1.55, T.products + k * 2.1 + 1.9, ease.out));
   const flash = Math.max(
     ...[0, 1, 2].map((k) => {
       const d = t - (T.products + k * 2.1 + 1.7);
@@ -215,7 +213,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   );
   drawNeuron(ctx, HERO.neuron.x, HERO.neuron.y, HERO.neuron.r, { act });
   if (flash > 0.01) circle(ctx, HERO.neuron.x, HERO.neuron.y, HERO.neuron.r + 5 + 10 * (1 - flash), { stroke: rgba(RGB_WHITE, 0.6 * flash), lw: 2 });
-  void arrivals;
 
   const sumA = seg(t, T.products + 1.5, T.products + 2.2, ease.out);
   if (sumA > 0.01) {

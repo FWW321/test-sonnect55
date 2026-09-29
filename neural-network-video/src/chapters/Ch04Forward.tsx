@@ -1,17 +1,17 @@
 import { Sequence } from "remotion";
 import { RollingNumber } from "../components/remocn/rolling-number";
 import { Canvas } from "../lib/canvas";
-import { diverging, grey, rgba } from "../lib/color";
+import { diverging, rgba } from "../lib/color";
 import { circle, heatmap, line, rrect, text } from "../lib/draw";
 import { clamp, ease, fmt, lerp, seg } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
-import { C, FPS, RGB_NEG, RGB_POS } from "../theme";
+import { C, FPS, RGB_POS } from "../theme";
 import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
 import { Formula } from "../ui/Formula";
-import { H1, LEGEND, drawClassDot, drawSmallNeuron } from "../visuals/carry";
-import { digitNet, forwardDigit, heroImage, showcaseImage } from "../visuals/data";
+import { LEGEND, drawClassDot, drawSmallNeuron } from "../visuals/carry";
+import { digitNet, heroImage, showcaseImage } from "../visuals/data";
 import {
   FWD_DONE,
   FWD_IDLE,
@@ -223,7 +223,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
       else drawClassDot(ctx, x, y, r, "A", mv);
     }
   }
-  void RGB_NEG;
 }
 
 const Overlay: React.FC = () => {
@@ -266,5 +265,3 @@ export const Ch04Forward: React.FC = () => (
   </>
 );
 
-void grey;
-void forwardDigit;

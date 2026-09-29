@@ -2,7 +2,7 @@ import { Sequence } from "remotion";
 import { SoftBlurIn } from "../components/remocn/soft-blur-in";
 import { Canvas } from "../lib/canvas";
 import { grey, rgba } from "../lib/color";
-import { arrow, circle, glow, pulse, rrect, text } from "../lib/draw";
+import { arrow, glow, pulse, rrect, text } from "../lib/draw";
 import { clamp, ease, hash01, lerp, seg } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
 import { C, FPS, RGB_POS } from "../theme";
@@ -153,7 +153,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   ctx.scale(cam.z, cam.z);
   ctx.translate(-cam.x, -cam.y);
 
-  const hx = HERO_C.x / CELL; // for radial reveal distance
   const numA = seg(t, T.numbers, T.numbers + 1.2, ease.out) * (1 - seg(t, 13.2, 14.4, ease.inOutSine));
   const openA = 1 - seg(t, T.open, T.open + 1.1, ease.out);
   const pixelA = seg(t, T.pixelIn[0], T.pixelIn[1], ease.out);
@@ -231,7 +230,6 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
   const gl = pixelA * (1 - seg(t, 0.9, 3.4, ease.out));
   if (gl > 0.01) glow(ctx, HERO_C.x, HERO_C.y, CELL * 3.2, [235, 245, 255], 0.55 * gl);
   ctx.restore();
-  void hx;
 
   // ---------- screen layer: everything after the cells have become a vector
   const boxA = seg(t, T.boxIn[0], T.boxIn[1], ease.out);

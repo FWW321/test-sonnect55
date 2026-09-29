@@ -2,7 +2,7 @@ import { Canvas } from "../lib/canvas";
 import { rgba } from "../lib/color";
 import { FONT_SANS } from "../fonts";
 import { arrow, circle, glow, line, polyline, rrect, text } from "../lib/draw";
-import { clamp, ease, fmt, hash01, keyframes, lerp, seg, thousands, TAU } from "../lib/math";
+import { clamp, ease, fmt, hash01, keyframes, lerp, seg, thousands } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
 import { C, FPS, RGB, RGB_DIM, RGB_NEG, RGB_POS, RGB_WHITE } from "../theme";
 import { chapterById } from "../timeline";
@@ -293,7 +293,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
     const gIn = seg(t, T.gradIn, T.gradIn + 1.0, ease.soft);
     const gOut = 1 - seg(t, 6.6, 7.4, ease.inOutSine);
     const aUp = gIn * gOut * singleA;
-    const startPos = t < T.hop[0] ? [START.w, START.b] : [START.w, START.b];
+    const startPos = [START.w, START.b];
     if (aUp > 0.01) {
       const tip = surfaceArrow(ctx, cam, startPos[0], startPos[1], UP[0], UP[1], 0.07, 0.07 + 0.5 * gIn, { color: C.neg, lw: 3.2, alpha: aUp });
       if (tip) tag(ctx, "∇L", tip.x + 10, tip.y - 2, C.neg, aUp);
@@ -311,7 +311,7 @@ function drawScene(ctx: CanvasRenderingContext2D, gf: number) {
       }
     }
     // the ball
-    if (t < T.hop[0] || true) {
+    {
       const s = project(cam, toWorld(bw, bb));
       const f = project(cam, [toWorld(bw, bb)[0], toWorld(bw, bb)[1], 0]);
       if (Math.abs(s.y - f.y) > 2) {
@@ -564,4 +564,3 @@ export const Ch07Descent: React.FC = () => {
   );
 };
 
-void TAU;

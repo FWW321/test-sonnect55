@@ -1,6 +1,6 @@
 import { Canvas } from "../lib/canvas";
 import { rgba } from "../lib/color";
-import { arrow, circle, glow, pulse, text } from "../lib/draw";
+import { circle, glow, pulse, text } from "../lib/draw";
 import { clamp, ease, fmt, seg, thousands } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
 import { C, FPS, RGB, RGB_NEG, RGB_POS } from "../theme";
@@ -10,8 +10,8 @@ import { ChapterCard } from "../ui/ChapterCard";
 import { Formula } from "../ui/Formula";
 import { UpdateRule } from "../ui/UpdateRule";
 import { W_NODE, drawWNode } from "../visuals/carry";
-import { BWD_DONE, HARD, backData, bwdEnv, drawBackward } from "../visuals/backView";
-import { FWD_DONE, H_YS, OUT_YS, X_H1, X_H2, X_OUT, drawDigitNet } from "../visuals/digitNetView";
+import { HARD, backData, bwdEnv, drawBackward } from "../visuals/backView";
+import { FWD_DONE, OUT_YS, X_H1, X_H2, X_OUT, drawDigitNet } from "../visuals/digitNetView";
 import { GNode, chip, drawGEdge, drawGNode, edgeEnds } from "../visuals/graph";
 
 /**
@@ -375,10 +375,6 @@ function drawRealNet(ctx: CanvasRenderingContext2D, t: number, alpha: number) {
     text(ctx, "个梯度", 1128, 324, { size: 17, weight: 500, color: C.dim, align: "center", font: "cjk", alpha: tot });
     text(ctx, "一次前向 + 一次反向", 1128, 350, { size: 14, weight: 500, color: C.dim, align: "center", font: "cjk", alpha: tot });
   }
-  void X_H1;
-  void H_YS;
-  void BWD_DONE;
-  void arrow;
 }
 
 // ---------------------------------------------------------------------------------- scene
@@ -507,5 +503,3 @@ export const Ch08Backprop: React.FC = () => (
   </>
 );
 
-void RGB_POS;
-void X_H2;

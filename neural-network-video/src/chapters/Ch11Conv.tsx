@@ -7,8 +7,8 @@ import { C, FPS, RGB_NEG, RGB_POS } from "../theme";
 import { chapterById } from "../timeline";
 import { Captions } from "../ui/Captions";
 import { ChapterCard } from "../ui/ChapterCard";
-import { WIN3, WIN_PATCH, drawTokenChip, drawWin3, tokenRects } from "../visuals/carry";
-import { ACC, HAND, K, LOSS, N_SNAP, SIDE, STEP_OF, biasAt, convolve, indexOfStep, kernelAt, statAt } from "../visuals/cnn";
+import { WIN3, WIN_PATCH, drawWin3, tokenRects } from "../visuals/carry";
+import { ACC, HAND, K, LOSS, N_SNAP, SIDE, STEP_OF, biasAt, convolve, kernelAt, statAt } from "../visuals/cnn";
 import { heroImage } from "../visuals/data";
 
 /**
@@ -292,7 +292,6 @@ const TILE = { cell: 38, gap: 16 };
 const tileX = (k: number) => 640 - (K * (TILE.cell * 3) + (K - 1) * TILE.gap) / 2 + k * (TILE.cell * 3 + TILE.gap);
 const TILE_Y = 210;
 const MAP_Y = 348;
-const MAP_CELL = (TILE.cell * 3) / SIDE; // maps are as wide as their kernel tiles
 
 const kAt = (t: number) => (N_SNAP - 1) * Math.pow(seg(t, T.train[0], T.train[1], ease.linear), 0.72);
 
@@ -353,8 +352,6 @@ function drawActD(ctx: CanvasRenderingContext2D, t: number) {
   text(ctx, `第 ${thousands(step)} 步`, 1140, 126, { size: 22, weight: 700, color: C.text, align: "right", font: "mono", alpha: ro });
   text(ctx, `损失 ${fmt(statAt(LOSS, k), 3)}  ·  正确率 ${Math.round(statAt(ACC, k) * 100)}%`, 1140, 152, { size: 15, weight: 500, color: C.dim, align: "right", font: "mono", alpha: ro });
   text(ctx, "同一张 7，经过每个卷积核之后：", 640 - (K * TILE.cell * 3 + (K - 1) * TILE.gap) / 2, MAP_Y - 12, { size: 15, weight: 500, color: C.dim, font: "cjk", alpha: ro * seg(t, T.train[0] + 0.6, T.train[0] + 1.6, ease.out) });
-  void RGB_NEG;
-  void indexOfStep;
 }
 
 // ---------------------------------------------------------------------------------- scene

@@ -8,7 +8,7 @@ import { glow, line, pulse } from "../lib/draw";
 import { clamp, ease, hash01, seg } from "../lib/math";
 import { renderDigit } from "../nn/digits";
 import { RGB_NEG } from "../theme";
-import { H1, drawSmallNeuron } from "./carry";
+
 import { digitNet } from "./data";
 import { H_YS, IMG, OUT_YS, R_H, R_OUT, X_H1, X_H2, X_OUT } from "./digitNetView";
 
@@ -203,6 +203,4 @@ export function drawBackward(ctx: Ctx, e: BwdEnv, alpha = 1) {
     if (m > 0.05) glow(ctx, X_OUT, OUT_YS[o], R_OUT * (1.8 + 1.8 * m), RGB_NEG, 0.2 + 0.7 * m);
   }
   ctx.globalAlpha = a0;
-  void drawSmallNeuron;
-  void H1;
 }

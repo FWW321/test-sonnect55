@@ -11,7 +11,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noUnusedLocals": false,
+    "noUnusedLocals": true,
     "noUncheckedIndexedAccess": false,
     "baseUrl": ".",
     "paths": {

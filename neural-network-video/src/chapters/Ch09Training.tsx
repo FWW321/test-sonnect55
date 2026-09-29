@@ -2,7 +2,7 @@ import { Sequence } from "remotion";
 import { AnimatedLineChart } from "../components/remocn/animated-line-chart";
 import { GlassCodeBlock } from "../components/remocn/glass-code-block";
 import { Canvas } from "../lib/canvas";
-import { arrow, circle, glow, line, polyline, rrect, text } from "../lib/draw";
+import { arrow, circle, glow, polyline, rrect, text } from "../lib/draw";
 import { clamp, ease, fmt, lerp, seg } from "../lib/math";
 import { chapterClock, useChapterClock } from "../lib/time";
 import { C, FPS, RGB, RGB_NEG, RGB_POS } from "../theme";
@@ -311,4 +311,3 @@ export const Ch09Training: React.FC = () => (
   </>
 );
 
-void RGB_NEG;
